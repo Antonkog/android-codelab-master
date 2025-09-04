@@ -40,34 +40,29 @@ kotlin {
     }
 }
 
-ext {
-    kotlinCoroutinesVersion = '1.10.2'
-    roomVersion = '2.7.2'
-    lifecycleVersion = '2.9.3'
-}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.core:core-ktx:1.17.0'
-    implementation 'androidx.appcompat:appcompat:1.7.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    implementation 'com.google.android.material:material:1.12.0'
 
-    //Lifecycle, LiveData and ViewModel dependencies
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
+    // AndroidX core UI
+    implementation libs.bundles.androidx.ui.core
 
-    //Room persistence
-    implementation "androidx.room:room-runtime:$roomVersion"
-    implementation "androidx.room:room-ktx:$roomVersion"
-    ksp "androidx.room:room-compiler:$roomVersion"
+    // Jetpack Compose - should we use it?
+//    implementation platform(libs.androidx.compose.bom)
+//    implementation libs.bundles.compose
+//    debugImplementation libs.androidx.compose.ui.tooling
 
-    //Coroutines
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinCoroutinesVersion"
+    // Lifecycle
+    implementation libs.bundles.lifecycle
 
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
+    // Room persistence
+    implementation libs.bundles.room
+    ksp libs.androidx.room.compiler
+
+    // Coroutines
+    implementation libs.bundles.coroutines
+
+    // Tests
+    testImplementation libs.junit4
+    androidTestImplementation libs.bundles.androidTest
 }

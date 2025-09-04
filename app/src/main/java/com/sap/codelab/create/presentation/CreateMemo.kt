@@ -1,14 +1,14 @@
-package com.sap.codelab.view.create
+package com.sap.codelab.create.presentation
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.sap.codelab.R
+import com.sap.codelab.core.presentation.extensions.empty
 import com.sap.codelab.databinding.ActivityCreateMemoBinding
-import com.sap.codelab.utils.extensions.empty
 
 /**
  * Activity that allows a user to create a new Memo.
@@ -41,7 +41,7 @@ internal class CreateMemo : AppCompatActivity() {
                 true
             }
 
-            else             -> super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -56,8 +56,10 @@ internal class CreateMemo : AppCompatActivity() {
                 setResult(RESULT_OK)
                 finish()
             } else {
-                memoTitleContainer.error = getErrorMessage(model.hasTitleError(), R.string.memo_title_empty_error)
-                memoDescription.error = getErrorMessage(model.hasTextError(), R.string.memo_text_empty_error)
+                memoTitleContainer.error =
+                    getErrorMessage(model.hasTitleError(), R.string.memo_title_empty_error)
+                memoDescription.error =
+                    getErrorMessage(model.hasTextError(), R.string.memo_text_empty_error)
             }
         }
     }

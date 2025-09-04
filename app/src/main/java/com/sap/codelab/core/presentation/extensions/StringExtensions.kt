@@ -1,4 +1,4 @@
-package com.sap.codelab.utils.extensions
+package com.sap.codelab.core.presentation.extensions
 
 /**
  * @return an empty String.

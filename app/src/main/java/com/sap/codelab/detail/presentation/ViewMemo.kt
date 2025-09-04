@@ -1,11 +1,11 @@
-package com.sap.codelab.view.detail
+package com.sap.codelab.detail.presentation
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.sap.codelab.core.domain.Memo
 import com.sap.codelab.databinding.ActivityViewMemoBinding
-import com.sap.codelab.model.Memo
 import kotlinx.coroutines.launch
 
 internal const val BUNDLE_MEMO_ID: String = "memoId"

@@ -1,10 +1,10 @@
-package com.sap.codelab.view.create
+package com.sap.codelab.create.presentation
 
 import androidx.lifecycle.ViewModel
-import com.sap.codelab.model.Memo
-import com.sap.codelab.repository.Repository
-import com.sap.codelab.utils.coroutines.ScopeProvider
-import com.sap.codelab.utils.extensions.empty
+import com.sap.codelab.core.data.Repository
+import com.sap.codelab.core.domain.Memo
+import com.sap.codelab.core.presentation.extensions.empty
+import com.sap.codelab.core.utils.coroutines.ScopeProvider
 import kotlinx.coroutines.launch
 
 /**
@@ -27,7 +27,15 @@ internal class CreateMemoViewModel : ViewModel() {
      * Call this method to update the memo. This is usually needed when the user changed his input.
      */
     fun updateMemo(title: String, description: String) {
-        memo = Memo(title = title, description = description, id = 0, reminderDate = 0, reminderLatitude = 0, reminderLongitude = 0, isDone = false)
+        memo = Memo(
+            title = title,
+            description = description,
+            id = 0,
+            reminderDate = 0,
+            reminderLatitude = 0,
+            reminderLongitude = 0,
+            isDone = false
+        )
     }
 
     /**

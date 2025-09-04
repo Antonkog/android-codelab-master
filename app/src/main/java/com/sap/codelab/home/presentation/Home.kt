@@ -1,21 +1,21 @@
-package com.sap.codelab.view.home
+package com.sap.codelab.home.presentation
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.sap.codelab.R
+import com.sap.codelab.core.domain.Memo
+import com.sap.codelab.create.presentation.CreateMemo
 import com.sap.codelab.databinding.ActivityHomeBinding
-import com.sap.codelab.model.Memo
-import com.sap.codelab.view.create.CreateMemo
-import com.sap.codelab.view.detail.BUNDLE_MEMO_ID
-import com.sap.codelab.view.detail.ViewMemo
+import com.sap.codelab.detail.presentation.BUNDLE_MEMO_ID
+import com.sap.codelab.detail.presentation.ViewMemo
 import kotlinx.coroutines.launch
 
 /**
@@ -27,11 +27,12 @@ internal class Home : AppCompatActivity() {
     private lateinit var model: HomeViewModel
     private lateinit var menuItemShowAll: MenuItem
     private lateinit var menuItemShowOpen: MenuItem
-    private val createMemoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            model.refreshMemos()
+    private val createMemoLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                model.refreshMemos()
+            }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +54,7 @@ internal class Home : AppCompatActivity() {
     /**
      * Initializes the adapter and sets the needed callbacks.
      */
-    private fun initializeAdapter() : MemoAdapter {
+    private fun initializeAdapter(): MemoAdapter {
         val adapter = MemoAdapter(mutableListOf(), { view ->
             // Implementation for when the user selects a row to show the detail view
             showMemo((view.tag as Memo).id)
@@ -88,7 +89,12 @@ internal class Home : AppCompatActivity() {
         binding.contentHome.recyclerView.apply {
             layoutManager = LinearLayoutManager(this@Home, LinearLayoutManager.VERTICAL, false)
             this.adapter = adapter
-            addItemDecoration(DividerItemDecoration(this@Home, (layoutManager as LinearLayoutManager).orientation))
+            addItemDecoration(
+                DividerItemDecoration(
+                    this@Home,
+                    (layoutManager as LinearLayoutManager).orientation
+                )
+            )
         }
     }
 
@@ -111,6 +117,7 @@ internal class Home : AppCompatActivity() {
                 menuItemShowOpen.isVisible = true
                 true
             }
+
             R.id.action_show_open -> {
                 model.loadOpenMemos()
                 //Switch available menu options

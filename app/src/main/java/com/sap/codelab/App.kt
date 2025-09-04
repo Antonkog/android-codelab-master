@@ -1,6 +1,7 @@
-package com.sap.codelab.repository
+package com.sap.codelab
 
 import android.app.Application
+import com.sap.codelab.core.data.Repository
 
 /**
  * Extension of the Android Application class.

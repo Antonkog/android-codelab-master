@@ -1,6 +1,10 @@
-package com.sap.codelab.utils.coroutines
+package com.sap.codelab.core.utils.coroutines
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.cancel
 import kotlin.coroutines.EmptyCoroutineContext
 
 /**

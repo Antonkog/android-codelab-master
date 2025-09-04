@@ -1,9 +1,11 @@
-package com.sap.codelab.repository
+package com.sap.codelab.core.data
 
-import androidx.room.Room
 import android.content.Context
 import androidx.annotation.WorkerThread
-import com.sap.codelab.model.Memo
+import androidx.room.Room
+import com.sap.codelab.core.data.db.Database
+import com.sap.codelab.core.domain.IMemoRepository
+import com.sap.codelab.core.domain.Memo
 
 private const val DATABASE_NAME: String = "codelab"
 
@@ -15,7 +17,8 @@ internal object Repository : IMemoRepository {
     private lateinit var database: Database
 
     fun initialize(applicationContext: Context) {
-        database = Room.databaseBuilder(applicationContext, Database::class.java, DATABASE_NAME).build()
+        database =
+            Room.databaseBuilder(applicationContext, Database::class.java, DATABASE_NAME).build()
     }
 
     @WorkerThread

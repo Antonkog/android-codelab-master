@@ -1,19 +1,14 @@
 package com.sap.codelab.core.domain
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
 /**
- * Represents a memo.
+ * Domain model representing a memo (business layer).
  */
-@Entity(tableName = "memo")
 data class Memo(
-    @ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) var id: Long,
-    @ColumnInfo(name = "title") var title: String,
-    @ColumnInfo(name = "description") var description: String,
-    @ColumnInfo(name = "reminderDate") var reminderDate: Long,
-    @ColumnInfo(name = "reminderLatitude") var reminderLatitude: Long,
-    @ColumnInfo(name = "reminderLongitude") var reminderLongitude: Long,
-    @ColumnInfo(name = "isDone") var isDone: Boolean = false
+    val id: Long,
+    val title: String,
+    val description: String,
+    val reminderDate: Long,
+    val reminderLatitude: Long,
+    val reminderLongitude: Long,
+    val isDone: Boolean = false
 )

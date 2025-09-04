@@ -6,7 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sap.codelab.R
@@ -62,9 +62,10 @@ internal class Home : AppCompatActivity() {
             model.updateMemo(checkbox.tag as Memo, isChecked)
             model.refreshMemos()
         })
-        lifecycle.coroutineScope.launch {
-            model.memos.collect { memos ->
-                adapter.setItems(memos)
+
+        lifecycleScope.launch {
+            model.state.collect { state ->
+                adapter.setItems(state.memos)
             }
         }
         return adapter

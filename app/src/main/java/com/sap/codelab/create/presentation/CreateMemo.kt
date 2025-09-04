@@ -6,7 +6,6 @@ import android.view.MenuItem
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import com.sap.codelab.R
-import com.sap.codelab.core.presentation.extensions.empty
 import com.sap.codelab.databinding.ActivityCreateMemoBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -47,34 +46,36 @@ internal class CreateMemo : AppCompatActivity() {
     /**
      * Saves the memo if the input is valid; otherwise shows the corresponding error messages.
      */
-    private fun saveMemo() {
-        binding.contentCreateMemo.run {
-            model.updateMemo(memoTitle.text.toString(), memoDescription.text.toString())
-            if (model.isMemoValid()) {
-                model.saveMemo()
-                setResult(RESULT_OK)
-                finish()
-            } else {
-                memoTitleContainer.error =
-                    getErrorMessage(model.hasTitleError(), R.string.memo_title_empty_error)
-                memoDescription.error =
-                    getErrorMessage(model.hasTextError(), R.string.memo_text_empty_error)
-            }
+    private fun saveMemo() = with(binding.contentCreateMemo) {
+        model.updateMemo(memoTitle.text.toString(), memoDescription.text.toString())
+
+        if (model.isMemoValid()) {
+            handleValidMemo()
+        } else {
+            showValidationErrors()
         }
     }
 
-    /**
-     * Returns the error message if there is an error, or an empty string otherwise.
-     *
-     * @param hasError          - whether there is an error.
-     * @param errorMessageResId - the resource id of the error message to show.
-     * @return the error message if there is an error, or an empty string otherwise.
-     */
-    private fun getErrorMessage(hasError: Boolean, @StringRes errorMessageResId: Int): String {
-        return if (hasError) {
-            getString(errorMessageResId)
-        } else {
-            String.empty()
-        }
+    private fun handleValidMemo() {
+        model.saveMemo()
+        setResult(RESULT_OK)
+        finish()
     }
+
+    private fun showValidationErrors() = with(binding.contentCreateMemo) {
+        memoTitleContainer.error = getErrorMessage(
+            model.hasTitleError(),
+            R.string.memo_title_empty_error
+        )
+        memoDescription.error = getErrorMessage(
+            model.hasTextError(),
+            R.string.memo_text_empty_error
+        )
+    }
+
+    /**
+     * Returns the error message if there is an error, or null otherwise.
+     */
+    private fun getErrorMessage(hasError: Boolean, @StringRes errorMessageResId: Int): String? =
+        if (hasError) getString(errorMessageResId) else null
 }

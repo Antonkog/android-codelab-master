@@ -5,10 +5,10 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.sap.codelab.R
 import com.sap.codelab.core.presentation.extensions.empty
 import com.sap.codelab.databinding.ActivityCreateMemoBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Activity that allows a user to create a new Memo.
@@ -16,14 +16,13 @@ import com.sap.codelab.databinding.ActivityCreateMemoBinding
 internal class CreateMemo : AppCompatActivity() {
 
     private lateinit var binding: ActivityCreateMemoBinding
-    private lateinit var model: CreateMemoViewModel
+    private val model: CreateMemoViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCreateMemoBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
-        model = ViewModelProvider(this)[CreateMemoViewModel::class.java]
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

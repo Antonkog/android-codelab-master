@@ -47,11 +47,6 @@ dependencies {
     // AndroidX core UI
     implementation libs.bundles.androidx.ui.core
 
-    // Jetpack Compose - should we use it?
-//    implementation platform(libs.androidx.compose.bom)
-//    implementation libs.bundles.compose
-//    debugImplementation libs.androidx.compose.ui.tooling
-
     // Lifecycle
     implementation libs.bundles.lifecycle
 
@@ -61,6 +56,9 @@ dependencies {
 
     // Coroutines
     implementation libs.bundles.coroutines
+
+    // Koin DI
+    implementation(libs.bundles.koin)
 
     // Tests
     testImplementation libs.junit4

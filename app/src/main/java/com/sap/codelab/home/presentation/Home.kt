@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +16,7 @@ import com.sap.codelab.databinding.ActivityHomeBinding
 import com.sap.codelab.detail.presentation.BUNDLE_MEMO_ID
 import com.sap.codelab.detail.presentation.ViewMemo
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * The main activity of the app. Shows a list of recorded memos and lets the user add new memos.
@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 internal class Home : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
-    private lateinit var model: HomeViewModel
+    private val model: HomeViewModel by viewModel()
     private lateinit var menuItemShowAll: MenuItem
     private lateinit var menuItemShowOpen: MenuItem
     private val createMemoLauncher =
@@ -39,7 +39,6 @@ internal class Home : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
-        model = ViewModelProvider(this)[HomeViewModel::class.java]
 
         // Setup the adapter and the recycler view
         setupRecyclerView(initializeAdapter())

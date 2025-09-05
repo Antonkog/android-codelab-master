@@ -40,5 +40,5 @@ DI: implemented with Koin (for small project would be enough) Also possible to m
 - ScopeProvider.application makes sense only for background work that must outlive the ViewModel/Activity.
 When you use it from viewmodel can lead to inconsistent state, when user launch operation and then before it completed want to leave the screen. Replaced with viewmodel scope.
 - Dispatcher Default should be used for CPU related work not IO (saving in DB).
-- Memo was renamed to MemoEntity, and separate model Memo was created in Domain.
+- Memo was renamed to MemoEntity, and separate model Memo was created in Domain, added MemoMappers.
 - Update Memo was overriding previous fields, added default values.

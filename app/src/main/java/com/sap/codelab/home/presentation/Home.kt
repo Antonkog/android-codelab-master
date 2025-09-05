@@ -24,13 +24,13 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 internal class Home : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
-    private val model: HomeViewModel by viewModel()
+    private val viewModel: HomeViewModel by viewModel()
     private lateinit var menuItemShowAll: MenuItem
     private lateinit var menuItemShowOpen: MenuItem
     private val createMemoLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                model.refreshMemos()
+                viewModel.refreshMemos()
             }
         }
 
@@ -47,7 +47,7 @@ internal class Home : AppCompatActivity() {
             // Handles clicks on the FAB button > creates a new Memo
             createMemoLauncher.launch(Intent(this@Home, CreateMemo::class.java))
         }
-        model.loadOpenMemos()
+        viewModel.loadOpenMemos()
     }
 
     /**
@@ -59,12 +59,12 @@ internal class Home : AppCompatActivity() {
             showMemo((view.tag as Memo).id)
         }, { checkbox, isChecked ->
             // Implementation for when the user marks a memo as completed
-            model.updateMemo(checkbox.tag as Memo, isChecked)
-            model.refreshMemos()
+            viewModel.updateMemo(checkbox.tag as Memo, isChecked)
+            viewModel.refreshMemos()
         })
 
         lifecycleScope.launch {
-            model.state.collect { state ->
+            viewModel.state.collect { state ->
                 adapter.setItems(state.memos)
             }
         }
@@ -111,7 +111,7 @@ internal class Home : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_show_all -> {
-                model.loadAllMemos()
+                viewModel.loadAllMemos()
                 //Switch available menu options
                 menuItemShowAll.isVisible = false
                 menuItemShowOpen.isVisible = true
@@ -119,7 +119,7 @@ internal class Home : AppCompatActivity() {
             }
 
             R.id.action_show_open -> {
-                model.loadOpenMemos()
+                viewModel.loadOpenMemos()
                 //Switch available menu options
                 menuItemShowOpen.isVisible = false
                 menuItemShowAll.isVisible = true

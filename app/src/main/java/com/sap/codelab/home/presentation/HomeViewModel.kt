@@ -13,50 +13,67 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * HomeViewModel responsible for exposing the current memos list UI state.
+ *
+ * It observes database changes through repository flows and keeps the state
+ * updated automatically.
+ */
 internal class HomeViewModel(
     private val repository: IMemoRepository
 ) : ViewModel() {
-
+    
     /**
-     * Internal mutable state flow that holds the current state of the brochure list screen.
+     * Internal mutable state flow that holds the current screen state.
      */
     private val _state = MutableStateFlow(MemosListState())
 
     /**
-     * Brochure list UI state as a [StateFlow].
-     * Keeps upstream active for 5s after the last subscriber to
-     * avoid unnecessary reloads during quick lifecycle changes
-     * (e.g., orientation change). Starts by calling [loadBrochures].
+     * Publicly exposed UI state as a [StateFlow].
+     *
+     * - Keeps the upstream flow active for 5 seconds after the last collector
+     *   (avoids unnecessary reloads during quick lifecycle changes such as
+     *   configuration changes).
+     * - Starts by loading all memos.
      */
-
-    val state = _state
-        .onStart { loadAllMemos() }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000L),
-            MemosListState()
-        )
-
+    val state: StateFlow<MemosListState> =
+        _state
+            .onStart { loadAllMemos() }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000L),
+                initialValue = MemosListState()
+            )
 
     /**
-     * Loads all memos.
+     * Switches to observing all memos.
+     *
+     * The database is observed via a [Flow], so updates are propagated
+     * automatically whenever the underlying data changes.
      */
     fun loadAllMemos() {
         _state.update { it.copy(isShowingAll = true) }
 
-        viewModelScope.launch(Dispatchers.IO) {
-            _state.update { it.copy(memos = repository.getAll()) }
+        viewModelScope.launch {
+            repository.getAllMemoAsFlow().collect { memos ->
+                _state.update { it.copy(memos = memos) }
+            }
         }
     }
 
     /**
-     * Loads all open (not done) memos.
+     * Switches to observing only open memos (not marked as done).
+     *
+     * The database is observed via a [Flow], so updates are propagated
+     * automatically whenever the underlying data changes.
      */
     fun loadOpenMemos() {
         _state.update { it.copy(isShowingAll = false) }
 
-        viewModelScope.launch(Dispatchers.IO) {
-            _state.update { it.copy(memos = repository.getOpen()) }
+        viewModelScope.launch {
+            repository.getOpenMemoAsFlow().collect { memos ->
+                _state.update { it.copy(memos = memos) }
+            }
         }
     }
 

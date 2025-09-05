@@ -1,5 +1,7 @@
 package com.sap.codelab.core.domain
 
+import kotlinx.coroutines.flow.Flow
+
 
 /**
  * Interface for a repository offering memo related CRUD operations.
@@ -12,17 +14,17 @@ interface IMemoRepository {
     suspend fun saveMemo(memo: Memo)
 
     /**
+     * @return the memo whose id matches the given id.
+     */
+    suspend fun getMemoById(id: Long): Memo
+
+    /**
      * @return all memos currently in the database.
      */
-    suspend fun getAll(): List<Memo>
+    fun getAllMemoAsFlow(): Flow<List<Memo>>
 
     /**
      * @return all memos currently in the database, except those that have been marked as "done".
      */
-    suspend fun getOpen(): List<Memo>
-
-    /**
-     * @return the memo whose id matches the given id.
-     */
-    suspend fun getMemoById(id: Long): Memo
+    fun getOpenMemoAsFlow(): Flow<List<Memo>>
 }

@@ -10,7 +10,7 @@ data class Memo(
     val title: String = String.empty(),
     val description: String = String.empty(),
     val reminderDate: Long = 0,
-    val reminderLatitude: Long = 0,
-    val reminderLongitude: Long = 0,
+    val reminderLatitude: Double = 0.0,
+    val reminderLongitude: Double = 0.0,
     val isDone: Boolean = false
 )

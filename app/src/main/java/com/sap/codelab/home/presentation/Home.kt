@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +18,7 @@ import com.sap.codelab.detail.presentation.BUNDLE_MEMO_ID
 import com.sap.codelab.detail.presentation.ViewMemo
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.sap.codelab.utils.permissions.PermissionsHandler
 
 /**
  * The main activity of the app. Shows a list of recorded memos and lets the user add new memos.
@@ -34,6 +36,8 @@ internal class Home : AppCompatActivity() {
             }
         }
 
+    private lateinit var permissionsHandler: PermissionsHandler
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
@@ -43,6 +47,32 @@ internal class Home : AppCompatActivity() {
         // Setup the adapter and the recycler view
         setupRecyclerView(initializeAdapter())
 
+        // Setup permissions handler and request permissions with rationale on first open
+        permissionsHandler = PermissionsHandler(
+            activity = this,
+            caller = this
+        )
+            .apply {
+            callback = object : PermissionsHandler.Callback {
+                override fun onNotificationPermissionGranted() {
+                    binding.fab.visibility = View.VISIBLE
+                }
+
+                override fun onNotificationPermissionDenied() {
+                    binding.fab.visibility = View.GONE
+                }
+
+                override fun onAllLocationPermissionsGranted() {
+                    binding.fab.visibility = View.VISIBLE
+                }
+
+                override fun onLocationPermissionDenied(permission: String) {
+                    binding.fab.visibility = View.GONE
+                }
+
+            }
+        }
+        permissionsHandler.ensureLocationPermissions()
         binding.fab.setOnClickListener {
             // Handles clicks on the FAB button > creates a new Memo
             createMemoLauncher.launch(Intent(this@Home, CreateMemo::class.java))

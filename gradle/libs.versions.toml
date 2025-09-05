@@ -3,8 +3,9 @@ androidx-core = "1.17.0"
 appcompat = "1.7.1"
 constraintlayout = "2.2.1"
 material = "1.13.0"
-
 lifecycle = "2.9.3"
+playServicesLocation = "21.3.0"
+playServicesMaps = "19.2.0"
 room = "2.7.2"
 coroutines = "1.10.2"
 
@@ -19,8 +20,19 @@ espresso-core = "3.7.0"
 koinTest = "4.1.0"
 koinTestJunit4 = "4.1.0"
 koin = "4.1.0"
+#plugins
+secretsGradlePlugin = "2.0.1"
+gradle = "8.12.2"
+kotlinGradlePlugin = "2.2.10"
+comGoogleDevtoolsKspGradlePlugin = "2.2.10-2.0.2"
 
 [libraries]
+#plugins
+com-google-devtools-ksp-gradle-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "comGoogleDevtoolsKspGradlePlugin" }
+gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
+secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
+#libs
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
@@ -54,6 +66,8 @@ koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin"
 koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koinTest" }
 koin-test-junit4 = { module = "io.insert-koin:koin-test-junit4", version.ref = "koinTestJunit4" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 [bundles]
 compose = [
   "androidx-activity-compose",

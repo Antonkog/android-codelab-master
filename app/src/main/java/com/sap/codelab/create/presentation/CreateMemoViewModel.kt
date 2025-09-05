@@ -1,5 +1,7 @@
 package com.sap.codelab.create.presentation
 
+import android.R.attr.description
+import android.icu.util.UniversalTimeScale.toLong
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sap.codelab.core.domain.IMemoRepository
@@ -46,4 +48,11 @@ internal class CreateMemoViewModel(
      * @return true if the memo title is blank, false otherwise.
      */
     fun hasTitleError() = memo.title.isBlank()
+    fun updateLocation(latitude: Double, longitude: Double) { //todo: db migration to double
+        memo = memo.copy(reminderLatitude = latitude.times(1_000_000).toLong(), reminderLongitude = longitude.times(1_000_000).toLong())
+    }
+
+    fun hasValidLocation(): Boolean {
+       return memo.reminderLongitude !=0L && memo.reminderLatitude !=0L
+    }
 }

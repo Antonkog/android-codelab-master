@@ -1,6 +1,6 @@
 package com.sap.codelab.core.data
 
-import com.sap.codelab.core.data.db.Database
+import com.sap.codelab.core.data.db.AppDatabase
 import com.sap.codelab.core.domain.IMemoRepository
 import com.sap.codelab.core.domain.Memo
 import com.sap.codelab.core.domain.toMemo
@@ -9,7 +9,7 @@ import com.sap.codelab.core.domain.toMemoEntity
 /**
  * The repository is used to retrieve data from a data source.
  */
-internal class Repository(private val database: Database) : IMemoRepository {
+internal class Repository(private val database: AppDatabase) : IMemoRepository {
 
     override suspend fun saveMemo(memo: Memo) = database.getMemoDao().insert(memo.toMemoEntity())
 

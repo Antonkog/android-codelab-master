@@ -28,3 +28,17 @@ In this challenge the applicant has to implement location-based notifications/re
 - "Reaching the location" is defined as follows: The user is within 200 meters of the location he initially selected during the memo creation
 - The notification should also contain an icon (the icon choice is up to you)
 - The feature must also work, when the app is running in the background (or possibly not running at all)
+
+## Issues found:
+- Package structure: data related classes was in repository, that should contain business logic, repository interface, models. 
+Also the structure did not gave advantage of reusability, if we decide to separate this project into several modules.
+I prefer feature based structuring, with separate core package, that each of feature can use. So divided into create, detail, home, core packages.
+- Versions catalog, according to new best practices libs.versions.toml should be used.
+- Repository class was coupled with DB creation, that is hard to test. Also it was global object (singleton) that hides lifecycle concerns (closing DB, multiple processes). 
+DI: implemented with Koin (for small project would be enough) Also possible to make with HILT. HILT would not gave big gain in speed, but give additional complexity, that i did not wanted.
+- @WorkerThread  inside Repository does not enforce threading at runtime, should be replaced with suspend call. Room database operations (insert, update, delete, query) are blocking by default, that can lead to ANR's.
+- ScopeProvider.application makes sense only for background work that must outlive the ViewModel/Activity.
+When you use it from viewmodel can lead to inconsistent state, when user launch operation and then before it completed want to leave the screen. Replaced with viewmodel scope.
+- Dispatcher Default should be used for CPU related work not IO (saving in DB).
+- Memo was renamed to MemoEntity, and separate model Memo was created in Domain.
+- Update Memo was overriding previous fields, added default values.

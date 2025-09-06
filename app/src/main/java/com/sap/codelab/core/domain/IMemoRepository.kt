@@ -11,12 +11,12 @@ interface IMemoRepository {
     /**
      * Saves the given memo to the database.
      */
-    suspend fun saveMemo(memo: Memo)
+    suspend fun saveMemo(memo: Memo): Long
 
     /**
      * @return the memo whose id matches the given id.
      */
-    suspend fun getMemoById(id: Long): Memo
+    suspend fun getMemoById(id: Long): Memo?
 
     /**
      * @return all memos currently in the database.

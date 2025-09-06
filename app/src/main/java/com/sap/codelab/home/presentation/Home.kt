@@ -14,8 +14,8 @@ import com.sap.codelab.R
 import com.sap.codelab.core.domain.Memo
 import com.sap.codelab.create.presentation.CreateMemo
 import com.sap.codelab.databinding.ActivityHomeBinding
-import com.sap.codelab.detail.presentation.BUNDLE_MEMO_ID
 import com.sap.codelab.detail.presentation.ViewMemo
+import com.sap.codelab.utils.Constants.BUNDLE_MEMO_ID
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.sap.codelab.utils.permissions.PermissionsHandler
@@ -78,6 +78,11 @@ internal class Home : AppCompatActivity() {
             createMemoLauncher.launch(Intent(this@Home, CreateMemo::class.java))
         }
         viewModel.loadOpenMemos()
+
+        val memoId = intent.getLongExtra(BUNDLE_MEMO_ID, -1L)
+        if (memoId != -1L) {
+            showMemo(memoId)
+        }
     }
 
     /**

@@ -5,10 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.sap.codelab.core.domain.Memo
 import com.sap.codelab.databinding.ActivityViewMemoBinding
+import com.sap.codelab.utils.Constants.BUNDLE_MEMO_ID
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-internal const val BUNDLE_MEMO_ID: String = "memoId"
 
 /**
  * Activity that allows a user to see the details of a memo.

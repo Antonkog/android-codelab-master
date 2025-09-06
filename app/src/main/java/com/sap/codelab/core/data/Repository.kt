@@ -16,7 +16,7 @@ internal class Repository(private val database: AppDatabase) : IMemoRepository {
 
     override suspend fun saveMemo(memo: Memo) = database.getMemoDao().insert(memo.toMemoEntity())
 
-    override suspend fun getMemoById(id: Long): Memo = database.getMemoDao().getMemoById(id).toMemo()
+    override suspend fun getMemoById(id: Long): Memo? = database.getMemoDao().getMemoById(id)?.toMemo()
 
     override fun getOpenMemoAsFlow(): Flow<List<Memo>> =
         database.getMemoDao()

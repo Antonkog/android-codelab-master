@@ -1,8 +1,14 @@
 package com.sap.codelab.create.presentation
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
+import android.provider.Settings
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -10,13 +16,23 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.sap.codelab.R
+import com.sap.codelab.core.presentation.LocationService
 import com.sap.codelab.databinding.ActivityCreateMemoBinding
+import com.sap.codelab.utils.Constants
+import com.sap.codelab.utils.Constants.LAST_LATITUDE
+import com.sap.codelab.utils.Constants.LAST_LONGITUDE
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -27,7 +43,7 @@ internal class CreateMemo : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityCreateMemoBinding
     private val viewModel: CreateMemoViewModel by viewModel()
     private lateinit var map: GoogleMap
-    private var selectedLatLng: LatLng? = null
+    private val fusedLocationClient: FusedLocationProviderClient by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +62,17 @@ internal class CreateMemo : AppCompatActivity(), OnMapReadyCallback {
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+
+        if (!isLocationEnabled(baseContext)) {
+            Log.e("GeoFenceManager", "Location services are disabled")
+            Toast.makeText(baseContext, "Please enable location services", Toast.LENGTH_LONG).show()
+            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            startActivity(intent)
+        }
+        if (!isGooglePlayServicesAvailable(baseContext)) {
+            Log.e("GeoFenceManager", "Google Play Services not available")
+            Toast.makeText(baseContext, "Google Play Services required for geofencing", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -86,8 +113,30 @@ internal class CreateMemo : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        // Optional: Set default location (e.g., city center or user’s last known location)
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(0.0, 0.0), 1f))
+
+
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            if (location?.latitude != null)
+                map.moveCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        LatLng(
+                            location.latitude,
+                            location.longitude
+                        ), 15f
+                    )
+                )
+        }.addOnFailureListener { e ->
+            val sharedPreferences: SharedPreferences by inject()
+            val lat = sharedPreferences.getFloat(LAST_LATITUDE, 0F)
+            val lng = sharedPreferences.getFloat(LAST_LONGITUDE, 0F)
+            if (lat != 0F && lng != 0F)
+                map.moveCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        LatLng(lat.toDouble(), lng.toDouble()),
+                        15f
+                    )
+                )
+        }
 
         // Enable My Location if permission granted
         if (ContextCompat.checkSelfPermission(
@@ -100,10 +149,9 @@ internal class CreateMemo : AppCompatActivity(), OnMapReadyCallback {
 
         // Set click listener for map
         map.setOnMapClickListener { latLng ->
-            selectedLatLng = latLng
             map.clear()  // Clear previous markers
             map.addMarker(MarkerOptions().position(latLng).title("Selected Location"))
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f))
             // Update ViewModel with coordinates
             viewModel.updateLocation(latLng.latitude, latLng.longitude)
         }
@@ -136,11 +184,24 @@ internal class CreateMemo : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun handleValidMemo() {
-        viewModel.saveMemo()
-        setResult(RESULT_OK)
-        finish()
+        lifecycleScope.launch {
+            viewModel.saveMemo()
+            viewModel.addGeofence()
+            setResult(RESULT_OK)
+            finish()
+        }
     }
 
+    fun isLocationEnabled(context: Context): Boolean {
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+    fun isGooglePlayServicesAvailable(context: Context): Boolean {
+        val googleApiAvailability = GoogleApiAvailability.getInstance()
+        val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(context)
+        return resultCode == ConnectionResult.SUCCESS
+    }
     private fun showValidationErrors() = with(binding.contentCreateMemo) {
         memoTitleContainer.error =
             getErrorMessage(viewModel.hasTitleError(), R.string.memo_title_empty_error)
@@ -165,8 +226,16 @@ internal class CreateMemo : AppCompatActivity(), OnMapReadyCallback {
                 try {
                     map.isMyLocationEnabled = true
                 } catch (e: SecurityException) {
+                    Log.e("CreateMemo", "Error enabling location: ${e.message}")
                     // Handle unexpected denial
                 }
             }
         }
+
+    private fun startForegroundService(memoId: Long) {
+        val serviceIntent = Intent(applicationContext, LocationService::class.java).apply {
+            putExtra(Constants.BUNDLE_MEMO_ID, memoId)
+        }
+        startForegroundService(serviceIntent)
+    }
 }

@@ -23,4 +23,8 @@
     <string name="permission_location_denied">Location permission is required for full functionality. Please enable it in settings.</string>
     <string name="permission_background_location_denied">Background location permission is required for full functionality. Please enable it in settings.</string>
     <string name="permission_notification_denied">Notification permission is required to receive updates. Please enable it in settings.</string>
-    <string name="permission_generic_denied">A required permission was denied. Please enable it in settings.</string></resources>
+    <string name="permission_generic_denied">A required permission was denied. Please enable it in settings.</string>
+    <string name="location_service_channel">Channel for location services</string>
+    <string name="location_service_on">Location service is working, you are about to reach memo</string>
+    <string name="location_service_on_title">Location Service Active</string>
+</resources>

@@ -1,17 +1,16 @@
 package com.sap.codelab.create.presentation
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.sap.codelab.core.GeoFenceManager
 import com.sap.codelab.core.domain.IMemoRepository
 import com.sap.codelab.core.domain.Memo
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 /**
  * ViewModel for matching CreateMemo view. Handles user interactions.
  */
 internal class CreateMemoViewModel(
-    private val repository: IMemoRepository
+    private val repository: IMemoRepository,
+    private val geofenceManager: GeoFenceManager
 ) : ViewModel() {
 
     private var memo = Memo()
@@ -19,10 +18,9 @@ internal class CreateMemoViewModel(
     /**
      * Saves the memo in it's current state.
      */
-    fun saveMemo() {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.saveMemo(memo)
-        }
+    suspend fun saveMemo()  {
+        val newID = repository.saveMemo(memo)
+        memo = memo.copy(id = newID)
     }
 
     /**
@@ -51,6 +49,10 @@ internal class CreateMemoViewModel(
     }
 
     fun hasValidLocation(): Boolean {
-       return memo.reminderLongitude !=0.0 && memo.reminderLatitude !=0.0
+        return memo.reminderLongitude != 0.0 && memo.reminderLatitude != 0.0
+    }
+
+    fun addGeofence() {
+        geofenceManager.addGeofence(memo)
     }
 }

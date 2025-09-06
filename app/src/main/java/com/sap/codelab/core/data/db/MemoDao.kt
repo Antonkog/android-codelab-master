@@ -28,11 +28,11 @@ internal interface MemoDao {
      * Inserts the given MemoEntity into the database. We currently do not support updating of memos.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(memo: MemoEntity)
+    suspend fun insert(memo: MemoEntity): Long
 
     /**
      * @return the memo whose id matches the given id.
      */
     @Query("SELECT * FROM memo WHERE id = :memoId")
-    suspend fun getMemoById(memoId: Long): MemoEntity
+    suspend fun getMemoById(memoId: Long): MemoEntity?
 }

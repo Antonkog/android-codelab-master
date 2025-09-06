@@ -1,51 +1,105 @@
 package com.sap.codelab.home.presentation
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.CompoundButton
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.sap.codelab.core.domain.Memo
 import com.sap.codelab.databinding.RecyclerviewMemoBinding
-import kotlin.math.max
+
+/**
+ * Callback interface for memo interactions.
+ */
+interface MemoInteractionListener {
+    fun onMemoClicked(memo: Memo)
+    fun onCheckboxChanged(memo: Memo, isChecked: Boolean)
+}
 
 /**
  * Adapter containing a set of memos.
  */
 internal class MemoAdapter(
     private val items: MutableList<Memo>,
-    private val onClick: View.OnClickListener,
-    private val onCheckboxChanged: CompoundButton.OnCheckedChangeListener
+    private val listener: MemoInteractionListener
 ) : RecyclerView.Adapter<MemoViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewTypee: Int): MemoViewHolder {
-        return MemoViewHolder(newItemViewBinding(parent))
+    init {
+        setHasStableIds(true)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return items[position].id
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoViewHolder {
+        val binding = RecyclerviewMemoBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return MemoViewHolder(binding, listener)
     }
 
     override fun onBindViewHolder(holder: MemoViewHolder, position: Int) {
-        val memo = items[position]
-        holder.update(memo, onClick, onCheckboxChanged)
+        if (position in items.indices) {
+            holder.update(items[position])
+        }
     }
 
     override fun getItemCount(): Int = items.size
 
-    /**
-     * Updates the current list of items to the given list of items.
-     */
-    fun setItems(newItems: List<Memo>) {
-        val count = itemCount
-        items.clear()
-        items.addAll(newItems)
-        notifyItemRangeChanged(0, max(count, itemCount))
+    override fun onViewRecycled(holder: MemoViewHolder) {
+        super.onViewRecycled(holder)
+        // Clear listeners to prevent memory leaks
+        holder.binding.checkBox.setOnCheckedChangeListener(null)
+        holder.binding.root.setOnClickListener(null)
     }
 
     /**
-     * Creates the view binding for a memo item displayed in the list.
-     *
-     * @param parent    - the parent view group of the item.
-     * @return the view binding.
+     * Updates the current list of items to the given list of items using DiffUtil.
      */
-    private fun newItemViewBinding(parent: ViewGroup): RecyclerviewMemoBinding {
-        return RecyclerviewMemoBinding.inflate(LayoutInflater.from(parent.context))
+    fun setItems(newItems: List<Memo>) {
+        val diffCallback = MemoDiffCallback(items, newItems)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        items.clear()
+        items.addAll(newItems)
+        diffResult.dispatchUpdatesTo(this)
+    }
+}
+
+
+/**
+ * ViewHolder for displaying a single memo item.
+ */
+internal class MemoViewHolder(
+    val binding: RecyclerviewMemoBinding,
+    listener: MemoInteractionListener
+) : RecyclerView.ViewHolder(binding.root) {
+
+    init {
+        binding.checkBox.setOnCheckedChangeListener { _, isChecked ->
+            (binding.checkBox.tag as? Memo)?.let { memo ->
+                listener.onCheckboxChanged(memo, isChecked)
+            }
+        }
+        binding.root.setOnClickListener {
+            (binding.root.tag as? Memo)?.let { memo ->
+                listener.onMemoClicked(memo)
+            }
+        }
+    }
+
+    /**
+     * Updates the view with the given memo data.
+     */
+    fun update(memo: Memo) {
+        with(binding) {
+            memoTitle.text = memo.title.ifEmpty { "Untitled" }
+            memoText.text = memo.description.ifEmpty { "No description" }
+            checkBox.isChecked = memo.isDone
+            checkBox.isEnabled = !memo.isDone
+            checkBox.tag = memo
+            root.tag = memo
+        }
     }
 }

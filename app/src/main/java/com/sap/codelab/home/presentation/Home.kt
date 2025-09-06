@@ -89,13 +89,15 @@ internal class Home : AppCompatActivity() {
      * Initializes the adapter and sets the needed callbacks.
      */
     private fun initializeAdapter(): MemoAdapter {
-        val adapter = MemoAdapter(mutableListOf(), { view ->
-            // Implementation for when the user selects a row to show the detail view
-            showMemo((view.tag as Memo).id)
-        }, { checkbox, isChecked ->
-            // Implementation for when the user marks a memo as completed
-            viewModel.updateMemo(checkbox.tag as Memo, isChecked)
-            viewModel.refreshMemos()
+        val adapter = MemoAdapter(mutableListOf(), object : MemoInteractionListener {
+            override fun onMemoClicked(memo: Memo) {
+                showMemo(memo.id)
+            }
+
+            override fun onCheckboxChanged(memo: Memo, isChecked: Boolean) {
+                viewModel.updateMemo(memo, isChecked)
+                viewModel.refreshMemos()
+            }
         })
 
         lifecycleScope.launch {

@@ -44,3 +44,4 @@ When you use it from viewmodel can lead to inconsistent state, when user launch 
 - Update Memo was overriding previous fields, added default values.
 - Latitude and Longitude was set as Long inside room entity, replaced them with Double, without migration.
 - App bar layout was overlapping the status bar on some devices.
+- Memo Adapter optimisation: use DiffCallback, stable IDs, simplified listener interface.

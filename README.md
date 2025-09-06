@@ -43,3 +43,4 @@ When you use it from viewmodel can lead to inconsistent state, when user launch 
 - Memo was renamed to MemoEntity, and separate model Memo was created in Domain, added MemoMappers.
 - Update Memo was overriding previous fields, added default values.
 - Latitude and Longitude was set as Long inside room entity, replaced them with Double, without migration.
+- App bar layout was overlapping the status bar on some devices.

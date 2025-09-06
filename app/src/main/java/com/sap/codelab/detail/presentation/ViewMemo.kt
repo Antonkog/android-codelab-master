@@ -44,7 +44,7 @@ internal class ViewMemo : AppCompatActivity() {
      * @param memo - the memo whose details are to be displayed.
      */
     private fun updateUI(memo: Memo) {
-        binding.contentCreateMemo.run {
+        binding.contentViewMemo.run {
             memoTitle.setText(memo.title)
             memoDescription.setText(memo.description)
             memoTitle.isEnabled = false

@@ -12,13 +12,14 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sap.codelab.R
 import com.sap.codelab.core.domain.Memo
+import com.sap.codelab.core.presentation.LocationService
 import com.sap.codelab.create.presentation.CreateMemo
 import com.sap.codelab.databinding.ActivityHomeBinding
 import com.sap.codelab.detail.presentation.ViewMemo
 import com.sap.codelab.utils.Constants.BUNDLE_MEMO_ID
+import com.sap.codelab.utils.permissions.PermissionsHandler
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import com.sap.codelab.utils.permissions.PermissionsHandler
 
 /**
  * The main activity of the app. Shows a list of recorded memos and lets the user add new memos.
@@ -53,25 +54,27 @@ internal class Home : AppCompatActivity() {
             caller = this
         )
             .apply {
-            callback = object : PermissionsHandler.Callback {
-                override fun onNotificationPermissionGranted() {
-                    binding.fab.visibility = View.VISIBLE
-                }
+                callback = object : PermissionsHandler.Callback {
+                    override fun onNotificationPermissionGranted() {
+                        binding.fab.visibility = View.VISIBLE
+                        startLocationMonitoringService()
+                    }
 
-                override fun onNotificationPermissionDenied() {
-                    binding.fab.visibility = View.GONE
-                }
+                    override fun onNotificationPermissionDenied() {
+                        binding.fab.visibility = View.GONE
+                    }
 
-                override fun onAllLocationPermissionsGranted() {
-                    binding.fab.visibility = View.VISIBLE
-                }
+                    override fun onAllLocationPermissionsGranted() {
+                        binding.fab.visibility = View.VISIBLE
+                        startLocationMonitoringService()
+                    }
 
-                override fun onLocationPermissionDenied(permission: String) {
-                    binding.fab.visibility = View.GONE
-                }
+                    override fun onLocationPermissionDenied(permission: String) {
+                        binding.fab.visibility = View.GONE
+                    }
 
+                }
             }
-        }
         permissionsHandler.ensureLocationPermissions()
         binding.fab.setOnClickListener {
             // Handles clicks on the FAB button > creates a new Memo
@@ -164,6 +167,13 @@ internal class Home : AppCompatActivity() {
             }
 
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun startLocationMonitoringService() {
+        if (!LocationService.isRunning()) {
+            val intent = Intent(this, LocationService::class.java)
+            startForegroundService(intent)
         }
     }
 }

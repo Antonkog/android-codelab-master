@@ -12,7 +12,8 @@ fun MemoEntity.toMemo(): Memo = Memo(
     reminderDate = reminderDate,
     reminderLatitude = reminderLatitude,
     reminderLongitude = reminderLongitude,
-    isDone = isDone
+    isDone = isDone,
+    notificationShown = notificationShown
 )
 
 fun Memo.toMemoEntity(): MemoEntity = MemoEntity(
@@ -22,5 +23,6 @@ fun Memo.toMemoEntity(): MemoEntity = MemoEntity(
     reminderDate = reminderDate,
     reminderLatitude = reminderLatitude,
     reminderLongitude = reminderLongitude,
-    isDone = isDone
+    isDone = isDone,
+    notificationShown = notificationShown
 )

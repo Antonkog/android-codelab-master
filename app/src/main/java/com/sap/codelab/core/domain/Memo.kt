@@ -12,5 +12,6 @@ data class Memo(
     val reminderDate: Long = 0,
     val reminderLatitude: Double = 0.0,
     val reminderLongitude: Double = 0.0,
-    val isDone: Boolean = false
+    val isDone: Boolean = false,
+    val notificationShown: Boolean = false
 )

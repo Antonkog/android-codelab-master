@@ -27,4 +27,9 @@ interface IMemoRepository {
      * @return all memos currently in the database, except those that have been marked as "done".
      */
     fun getOpenMemoAsFlow(): Flow<List<Memo>>
+
+    /**
+     * @return all memos that are not done and for which notification hasn't been shown.
+     */
+    fun getNotNotifiedMemosAsFlow(): Flow<List<Memo>>
 }

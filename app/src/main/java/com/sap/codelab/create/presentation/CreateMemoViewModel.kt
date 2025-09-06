@@ -18,7 +18,7 @@ internal class CreateMemoViewModel(
     /**
      * Saves the memo in it's current state.
      */
-    suspend fun saveMemo()  {
+    suspend fun saveMemo() {
         val newID = repository.saveMemo(memo)
         memo = memo.copy(id = newID)
     }
@@ -33,7 +33,8 @@ internal class CreateMemoViewModel(
     /**
      * @return true if the title and content are not blank; false otherwise.
      */
-    fun isMemoValid(): Boolean = memo.title.isNotBlank() && memo.description.isNotBlank()
+    fun isMemoValid(): Boolean =
+        memo.title.isNotBlank() && memo.description.isNotBlank() && memo.reminderLatitude != 0.0 && memo.reminderLongitude != 0.0
 
     /**
      * @return true if the memo text is blank, false otherwise.

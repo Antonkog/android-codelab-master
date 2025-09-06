@@ -41,8 +41,7 @@ class LocationService : Service() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private var serviceJob: Job? = null
-    private var memo: Memo? = null
-    private var targetLocation: Location? = null
+    private var memos: List<Memo> = emptyList()
 
     companion object {
         private const val TAG = "LocationService"
@@ -51,7 +50,9 @@ class LocationService : Service() {
         private const val CHANNEL_ID = "location_channel"
         private const val CHANNEL_NAME = "Location Services"
         private const val UPDATE_INTERVAL = 5000L // 5 seconds
-        private const val TIMEOUT_DURATION = 600000L // 10 minutes timeout
+        @Volatile
+        private var running: Boolean = false
+        fun isRunning(): Boolean = running
     }
 
     override fun onCreate() {
@@ -65,15 +66,31 @@ class LocationService : Service() {
                         putFloat(LAST_LONGITUDE, currentLocation.longitude.toFloat())
                         apply()
                     }
-                    targetLocation?.let { target ->
-                        val distance = currentLocation.distanceTo(target)
-                        Log.d(TAG, "Distance to target: $distance meters")
-                        if (distance <= Constants.NOTIFICATION_RADIUS_IN_METERS) {
-                            showMemoNotification()
-                            stopLocationUpdates()
-                            stopSelf()
+                    if (memos.isNotEmpty()) {
+                        memos.forEach { memo ->
+                            val target = Location("target").apply {
+                                latitude = memo.reminderLatitude
+                                longitude = memo.reminderLongitude
+                            }
+                            val distance = currentLocation.distanceTo(target)
+                            Log.d(TAG, "Distance to memo ${'$'}{memo.id}: ${'$'}distance meters")
+                            if (distance <= Constants.NOTIFICATION_RADIUS_IN_METERS) {
+                                showMemoNotification(memo)
+                                // Mark as notified in DB to avoid duplicates
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    try {
+                                        repo.saveMemo(memo.copy(notificationShown = true))
+                                    } catch (e: Exception) {
+                                        Log.e(
+                                            TAG,
+                                            "Failed to mark memo as notified: ${'$'}{e.message}",
+                                            e
+                                        )
+                                    }
+                                }
+                            }
                         }
-                    } ?: Log.w(TAG, "Target location is null")
+                    }
                 } ?: Log.w(TAG, "Current location is null")
             }
         }
@@ -81,13 +98,6 @@ class LocationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val memoId = intent?.getStringExtra(BUNDLE_MEMO_ID)?.toLongOrNull()
-        if (memoId == null) {
-            Log.e(TAG, "Invalid memoId, stopping service")
-            stopSelf()
-            return START_NOT_STICKY
-        }
-
         // Start foreground service immediately
         createNotificationChannel()
         val foregroundNotification = buildForegroundNotification()
@@ -103,23 +113,19 @@ class LocationService : Service() {
         )
 
         // Perform async work after starting foreground
-        serviceJob = CoroutineScope(Dispatchers.IO).launch {
-            try {
-                memo = repo.getMemoById(memoId)
-                memo?.let {
-                    targetLocation = Location("target").apply {
-                        latitude = it.reminderLatitude
-                        longitude = it.reminderLongitude
+        if (serviceJob == null) {
+            running = true
+            serviceJob = CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    // Observe open memos continuously
+                    repo.getNotNotifiedMemosAsFlow().collect { list ->
+                        memos = list
                     }
-                    startLocationUpdates()
-                } ?: run {
-                    Log.e(TAG, "Memo not found for ID: $memoId")
-                    stopSelf()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error observing memos: ${e.message}", e)
                 }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error fetching memo: ${e.message}", e)
-                stopSelf()
             }
+            startLocationUpdates()
         }
 
         return START_STICKY
@@ -154,7 +160,11 @@ class LocationService : Service() {
             .build()
 
         try {
-            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, mainLooper)
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                mainLooper
+            )
             Log.d(TAG, "Requesting location updates")
         } catch (e: SecurityException) {
             Log.e(TAG, "Error requesting location updates: ${e.message}", e)
@@ -170,35 +180,38 @@ class LocationService : Service() {
         }
     }
 
-    private fun showMemoNotification() {
-        memo?.let { m ->
-            val text = m.description.take(Constants.NOTIFICATION_CHARS_COUNT)
-            val intent = Intent(this, Home::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                putExtra(BUNDLE_MEMO_ID, m.id)
-            }
-            val pendingIntent = PendingIntent.getActivity(
-                this,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle(m.title)
-                .setContentText(text)
-                .setSmallIcon(R.drawable.ic_note)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .build()
-            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.notify(NOTIFICATION_ID, notification)
-            Log.d(TAG, "Notification shown for memo ID: ${m.id}")
-        } ?: Log.w(TAG, "Memo is null, cannot show notification")
+    private fun showMemoNotification(memo: Memo) {
+        val text = memo.description.take(Constants.NOTIFICATION_CHARS_COUNT)
+        val intent = Intent(this, Home::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra(BUNDLE_MEMO_ID, memo.id)
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle(memo.title)
+            .setContentText(text)
+            .setSmallIcon(R.drawable.ic_note)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+            .build()
+
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(
+            NOTIFICATION_ID,
+            notification
+        )//optional  + memo.id.toInt() but i want to replace previous notification
+        Log.d(TAG, "Notification shown for memo ID: ${memo.id}")
     }
 
     override fun onDestroy() {
         Log.d(TAG, "Service destroyed")
+        running = false
         serviceJob?.cancel()
         stopLocationUpdates()
         super.onDestroy()

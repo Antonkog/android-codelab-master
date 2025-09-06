@@ -25,6 +25,6 @@
     <string name="permission_notification_denied">Notification permission is required to receive updates. Please enable it in settings.</string>
     <string name="permission_generic_denied">A required permission was denied. Please enable it in settings.</string>
     <string name="location_service_channel">Channel for location services</string>
-    <string name="location_service_on">Location service is working, you are about to reach memo</string>
+    <string name="location_service_on">You will be notified when reach the memo 200m radius.</string>
     <string name="location_service_on_title">Location Service Active</string>
 </resources>

@@ -25,6 +25,12 @@ internal interface MemoDao {
     fun getOpenAsFlow(): Flow<List<MemoEntity>>
 
     /**
+     * @return all memos for which a notification has not yet been shown.
+     */
+    @Query("SELECT * FROM memo WHERE notificationShown = 0")
+    fun getNotNotifiedAsFlow(): Flow<List<MemoEntity>>
+
+    /**
      * Inserts the given MemoEntity into the database. We currently do not support updating of memos.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)

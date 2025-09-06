@@ -4,13 +4,13 @@
     tools:context="com.sap.codelab.home.presentation.Home">
     <item
         android:id="@+id/action_show_all"
-        android:orderInCategory="100"
+        android:contentDescription="@string/show_all_description"
         android:title="@string/action_show_all"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_show_open"
-        android:orderInCategory="110"
+        android:contentDescription="@string/show_open_description"
         android:title="@string/action_show_open"
         android:visible="false"
         app:showAsAction="always"

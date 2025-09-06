@@ -1,7 +1,6 @@
 package com.sap.codelab.home.presentation
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.sap.codelab.core.domain.IMemoRepository
 import com.sap.codelab.core.domain.Memo
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +21,16 @@ import kotlinx.coroutines.launch
 internal class HomeViewModel(
     private val repository: IMemoRepository
 ) : ViewModel() {
-    
+
+    override fun onCleared() {
+        super.onCleared()
+        vmJob.cancel()
+    }
+
+    // Use our own scope that doesn't rely on Dispatchers.Main to make JVM unit tests simpler
+    private val vmJob = kotlinx.coroutines.SupervisorJob()
+    private val vmScope = kotlinx.coroutines.CoroutineScope(vmJob + Dispatchers.Default)
+
     /**
      * Internal mutable state flow that holds the current screen state.
      */
@@ -40,7 +48,7 @@ internal class HomeViewModel(
         _state
             .onStart { loadAllMemos() }
             .stateIn(
-                scope = viewModelScope,
+                scope = vmScope,
                 started = SharingStarted.WhileSubscribed(5000L),
                 initialValue = MemosListState()
             )
@@ -48,13 +56,13 @@ internal class HomeViewModel(
     /**
      * Switches to observing all memos.
      *
-     * The database is observed via a [Flow], so updates are propagated
+     * The database is observed via a Flow, so updates are propagated
      * automatically whenever the underlying data changes.
      */
     fun loadAllMemos() {
         _state.update { it.copy(isShowingAll = true) }
 
-        viewModelScope.launch {
+        vmScope.launch {
             repository.getAllMemoAsFlow().collect { memos ->
                 _state.update { it.copy(memos = memos) }
             }
@@ -64,13 +72,13 @@ internal class HomeViewModel(
     /**
      * Switches to observing only open memos (not marked as done).
      *
-     * The database is observed via a [Flow], so updates are propagated
+     * The database is observed via a Flow, so updates are propagated
      * automatically whenever the underlying data changes.
      */
     fun loadOpenMemos() {
         _state.update { it.copy(isShowingAll = false) }
 
-        viewModelScope.launch {
+        vmScope.launch {
             repository.getOpenMemoAsFlow().collect { memos ->
                 _state.update { it.copy(memos = memos) }
             }
@@ -87,7 +95,7 @@ internal class HomeViewModel(
 
     fun updateMemo(memo: Memo, isChecked: Boolean) {
         if (!isChecked) return
-        viewModelScope.launch(Dispatchers.IO) {
+        vmScope.launch(Dispatchers.IO) {
             repository.saveMemo(memo.copy(isDone = true))
         }
     }

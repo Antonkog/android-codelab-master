@@ -27,4 +27,6 @@
     <string name="location_service_channel">Channel for location services</string>
     <string name="location_service_on">You will be notified when reach the memo 200m radius.</string>
     <string name="location_service_on_title">Location Service Active</string>
+    <string name="show_all_description">show all</string>
+    <string name="show_open_description">show open</string>
 </resources>

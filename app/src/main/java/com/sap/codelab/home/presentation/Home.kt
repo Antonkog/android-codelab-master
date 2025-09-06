@@ -24,7 +24,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 /**
  * The main activity of the app. Shows a list of recorded memos and lets the user add new memos.
  */
-internal class Home : AppCompatActivity() {
+class Home : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
     private val viewModel: HomeViewModel by viewModel()
@@ -126,7 +126,7 @@ internal class Home : AppCompatActivity() {
      * Initializes the recycler view to display the list of memos.
      */
     private fun setupRecyclerView(adapter: MemoAdapter) {
-        binding.contentHome.recyclerView.apply {
+        binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(this@Home, LinearLayoutManager.VERTICAL, false)
             this.adapter = adapter
             addItemDecoration(

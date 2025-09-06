@@ -57,6 +57,7 @@ dependencies {
 
     // Room persistence
     implementation(libs.bundles.room)
+    implementation(libs.core.ktx)
     ksp(libs.androidx.room.compiler)
 
     // Coroutines
@@ -66,6 +67,8 @@ dependencies {
     implementation(libs.bundles.koin)
 
     // Tests
-    testImplementation(libs.junit4)
+    testImplementation(libs.bundles.test)
+
+    // Android instrumented tests
     androidTestImplementation(libs.bundles.androidTest)
 }

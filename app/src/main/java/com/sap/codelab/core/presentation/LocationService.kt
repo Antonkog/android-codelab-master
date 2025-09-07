@@ -49,6 +49,8 @@ class LocationService : Service() {
     private var memos: List<Memo> = emptyList()
 
     companion object {
+        @Volatile
+        var instance: LocationService? = null
         private const val TAG = "LocationService"
         private const val FOREGROUND_ID = 127
         private const val NOTIFICATION_ID = 1002
@@ -62,6 +64,7 @@ class LocationService : Service() {
     }
 
     override fun onCreate() {
+        instance = this
         super.onCreate()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationCallback = object : LocationCallback() {
@@ -104,21 +107,8 @@ class LocationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // Start foreground service immediately
-        createNotificationChannel()
-        val foregroundNotification = buildForegroundNotification()
-        ServiceCompat.startForeground(
-            this,
-            FOREGROUND_ID,
-            foregroundNotification,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
-            } else {
-                0
-            }
-        )
-
-        // Perform async work after starting foreground
+        // Start background work without forcing foreground notification.
+        // Foreground promotion will be controlled by App lifecycle callbacks.
         if (serviceJob == null) {
             running = true
             serviceJob = serviceScope.launch {
@@ -133,8 +123,31 @@ class LocationService : Service() {
             }
             startLocationUpdates()
         }
-
         return START_STICKY
+    }
+
+    fun promoteToForeground() {
+        createNotificationChannel()
+        val foregroundNotification = buildForegroundNotification()
+        ServiceCompat.startForeground(
+            this,
+            FOREGROUND_ID,
+            foregroundNotification,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+            } else {
+                0
+            }
+        )
+    }
+
+    fun demoteFromForeground(removeNotification: Boolean = true) {
+        // Stop being a foreground service but keep it running
+        try {
+            ServiceCompat.stopForeground(this, if (removeNotification) ServiceCompat.STOP_FOREGROUND_REMOVE else 0)
+        } catch (e: Exception) {
+            Log.w(TAG, "stopForeground failed: ${e.message}")
+        }
     }
 
     private fun createNotificationChannel() {
@@ -158,6 +171,7 @@ class LocationService : Service() {
                 IconCompat.createWithResource(this, R.drawable.ic_search_location).toIcon(this)
             )
             .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setSilent(true)
             .setSound(null)
             .build()
     }
@@ -206,7 +220,7 @@ class LocationService : Service() {
             .setContentText(text)
             .setSmallIcon(R.drawable.ic_note)
             .setLargeIcon(IconCompat.createWithResource(this, R.drawable.ic_note).toIcon(this))
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
             .build()
@@ -222,6 +236,7 @@ class LocationService : Service() {
     override fun onDestroy() {
         Log.d(TAG, "Service destroyed")
         running = false
+        instance = null
         serviceJob?.cancel()
         // Cancel the entire service scope to stop any ongoing work tied to this service
         serviceSupervisor.cancel()

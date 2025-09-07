@@ -152,7 +152,8 @@ class HomeFragment : Fragment() {
                 requireContext(),
                 com.sap.codelab.core.presentation.LocationService::class.java
             )
-            requireContext().startForegroundService(intent)
+            // Start as a normal service while app is in foreground; it will be promoted to foreground when app goes to background.
+            requireContext().startService(intent)
         }
     }
 

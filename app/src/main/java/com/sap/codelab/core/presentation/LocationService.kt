@@ -32,6 +32,7 @@ import com.sap.codelab.utils.Constants.LAST_LONGITUDE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -42,6 +43,8 @@ class LocationService : Service() {
     private val sharedPreferences: SharedPreferences by inject()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
+    private val serviceSupervisor = SupervisorJob()
+    private val serviceScope: CoroutineScope = CoroutineScope(serviceSupervisor + Dispatchers.IO)
     private var serviceJob: Job? = null
     private var memos: List<Memo> = emptyList()
 
@@ -80,7 +83,7 @@ class LocationService : Service() {
                             if (distance <= Constants.NOTIFICATION_RADIUS_IN_METERS) {
                                 showMemoNotification(memo)
                                 // Mark as notified in DB to avoid duplicates
-                                CoroutineScope(Dispatchers.IO).launch {
+                                serviceScope.launch {
                                     try {
                                         repo.saveMemo(memo.copy(notificationShown = true))
                                     } catch (e: Exception) {
@@ -118,7 +121,7 @@ class LocationService : Service() {
         // Perform async work after starting foreground
         if (serviceJob == null) {
             running = true
-            serviceJob = CoroutineScope(Dispatchers.IO).launch {
+            serviceJob = serviceScope.launch {
                 try {
                     // Observe open memos continuously
                     repo.getNotNotifiedMemosAsFlow().collect { list ->
@@ -220,6 +223,8 @@ class LocationService : Service() {
         Log.d(TAG, "Service destroyed")
         running = false
         serviceJob?.cancel()
+        // Cancel the entire service scope to stop any ongoing work tied to this service
+        serviceSupervisor.cancel()
         stopLocationUpdates()
         super.onDestroy()
     }

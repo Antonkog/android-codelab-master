@@ -31,8 +31,6 @@ class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        @Suppress("DEPRECATION")
-        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -44,6 +42,8 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setupMenu()
 
         // Setup the adapter and the recycler view
         setupRecyclerView(initializeAdapter())
@@ -113,33 +113,37 @@ class HomeFragment : Fragment() {
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_home, menu)
-        menuItemShowAll = menu.findItem(R.id.action_show_all)
-        menuItemShowOpen = menu.findItem(R.id.action_show_open)
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        @Suppress("DEPRECATION")
-        return when (item.itemId) {
-            R.id.action_show_all -> {
-                viewModel.loadAllMemos()
-                menuItemShowAll.isVisible = false
-                menuItemShowOpen.isVisible = true
-                true
+    private fun setupMenu() {
+        val menuHost: androidx.core.view.MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : androidx.core.view.MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_home, menu)
+                menuItemShowAll = menu.findItem(R.id.action_show_all)
+                menuItemShowOpen = menu.findItem(R.id.action_show_open)
+                // initialize visibility according to state
+                val showingAll = viewModel.state.value.isShowingAll
+                menuItemShowAll.isVisible = !showingAll
+                menuItemShowOpen.isVisible = showingAll
             }
 
-            R.id.action_show_open -> {
-                viewModel.loadOpenMemos()
-                menuItemShowOpen.isVisible = false
-                menuItemShowAll.isVisible = true
-                true
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.action_show_all -> {
+                        viewModel.loadAllMemos()
+                        menuItemShowAll.isVisible = false
+                        menuItemShowOpen.isVisible = true
+                        true
+                    }
+                    R.id.action_show_open -> {
+                        viewModel.loadOpenMemos()
+                        menuItemShowOpen.isVisible = false
+                        menuItemShowAll.isVisible = true
+                        true
+                    }
+                    else -> false
+                }
             }
-
-            else -> super.onOptionsItemSelected(item)
-        }
+        }, viewLifecycleOwner)
     }
 
     private fun startLocationMonitoringService() {

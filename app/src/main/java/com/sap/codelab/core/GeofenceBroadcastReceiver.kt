@@ -7,13 +7,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import androidx.compose.ui.input.key.Key.Companion.Home
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingEvent
 import com.sap.codelab.R
 import com.sap.codelab.core.domain.IMemoRepository
 import com.sap.codelab.core.domain.Memo
 import com.sap.codelab.core.presentation.LocationService
+import com.sap.codelab.main.MainActivity
 import com.sap.codelab.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -68,7 +68,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
                     )
                     notificationManager.createNotificationChannel(channel)
 
-                    val intent = Intent(context, Home::class.java).apply {
+                    val intent = Intent(context, MainActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                         putExtra(Constants.BUNDLE_MEMO_ID, memo.id)
                     }

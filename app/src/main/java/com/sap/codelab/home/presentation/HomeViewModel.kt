@@ -1,12 +1,15 @@
 package com.sap.codelab.home.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.sap.codelab.core.domain.IMemoRepository
 import com.sap.codelab.core.domain.Memo
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -22,18 +25,12 @@ internal class HomeViewModel(
     private val repository: IMemoRepository
 ) : ViewModel() {
 
-    override fun onCleared() {
-        super.onCleared()
-        vmJob.cancel()
-    }
-
-    private val vmJob = kotlinx.coroutines.SupervisorJob()
-    private val vmScope = kotlinx.coroutines.CoroutineScope(vmJob + Dispatchers.Default)
-
     /**
      * Internal mutable state flow that holds the current screen state.
      */
     private val _state = MutableStateFlow(MemosListState())
+
+    private var memosJob: Job? = null
 
     /**
      * Publicly exposed UI state as a [StateFlow].
@@ -53,7 +50,7 @@ internal class HomeViewModel(
                 }
             }
             .stateIn(
-                scope = vmScope,
+                scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000L),
                 initialValue = MemosListState()
             )
@@ -67,8 +64,9 @@ internal class HomeViewModel(
     fun loadAllMemos() {
         _state.update { it.copy(isShowingAll = true) }
 
-        vmScope.launch {
-            repository.getAllMemoAsFlow().collect { memos ->
+        memosJob?.cancel()
+        memosJob = viewModelScope.launch {
+            repository.getAllMemoAsFlow().collectLatest { memos ->
                 _state.update { it.copy(memos = memos) }
             }
         }
@@ -83,8 +81,9 @@ internal class HomeViewModel(
     fun loadOpenMemos() {
         _state.update { it.copy(isShowingAll = false) }
 
-        vmScope.launch {
-            repository.getOpenMemoAsFlow().collect { memos ->
+        memosJob?.cancel()
+        memosJob = viewModelScope.launch {
+            repository.getOpenMemoAsFlow().collectLatest { memos ->
                 _state.update { it.copy(memos = memos) }
             }
         }
@@ -100,7 +99,7 @@ internal class HomeViewModel(
 
     fun updateMemo(memo: Memo, isChecked: Boolean) {
         if (!isChecked) return
-        vmScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.saveMemo(memo.copy(isDone = true))
         }
     }

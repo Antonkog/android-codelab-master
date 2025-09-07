@@ -47,8 +47,6 @@ class CreateMemoFragment : Fragment(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        @Suppress("DEPRECATION")
-        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -60,6 +58,7 @@ class CreateMemoFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupMenu(view)
         binding.map.onCreate(savedInstanceState)
         binding.map.getMapAsync(this)
 
@@ -166,22 +165,23 @@ class CreateMemoFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_create_memo, menu)
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        @Suppress("DEPRECATION")
-        return when (item.itemId) {
-            R.id.action_save -> {
-                saveMemo()
-                true
+    private fun setupMenu(view: View) {
+        val menuHost: androidx.core.view.MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : androidx.core.view.MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_create_memo, menu)
             }
 
-            else -> super.onOptionsItemSelected(item)
-        }
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.action_save -> {
+                        saveMemo()
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner)
     }
 
     private fun saveMemo() = with(binding) {

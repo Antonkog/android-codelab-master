@@ -23,7 +23,7 @@ internal class ViewMemoViewModel(
      * Loads the memo whose id matches the given memoId from the database.
      */
     fun loadMemo(memoId: Long) {
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(Dispatchers.IO) {
             _memo.value = repository.getMemoById(memoId)
         }
     }

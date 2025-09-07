@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.sap.codelab.core.domain.Memo
-import com.sap.codelab.databinding.RecyclerviewMemoBinding
+import com.sap.codelab.databinding.ItemRvMemoBinding
 
 /**
  * Callback interface for memo interactions.
@@ -32,7 +32,7 @@ internal class MemoAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoViewHolder {
-        val binding = RecyclerviewMemoBinding.inflate(
+        val binding = ItemRvMemoBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -72,7 +72,7 @@ internal class MemoAdapter(
  * ViewHolder for displaying a single memo item.
  */
 internal class MemoViewHolder(
-    val binding: RecyclerviewMemoBinding,
+    val binding: ItemRvMemoBinding,
     listener: MemoInteractionListener
 ) : RecyclerView.ViewHolder(binding.root) {
 

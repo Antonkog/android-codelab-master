@@ -5,6 +5,7 @@ plugins {
     id("kotlin-android")
     id("com.google.devtools.ksp")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -21,9 +22,19 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
-        release {
+        debug {
             isMinifyEnabled = false
+        }
+        release {
+            isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+        }
+    }
+    kotlin {
+        target {
+            compilerOptions {
+                jvmTarget.set(JvmTarget.JVM_21)
+            }
         }
     }
     compileOptions {
@@ -32,14 +43,6 @@ android {
     }
     buildFeatures {
         viewBinding = true
-    }
-}
-
-kotlin {
-    target {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
-        }
     }
 }
 
@@ -65,6 +68,10 @@ dependencies {
 
     // Koin DI
     implementation(libs.bundles.koin)
+
+    // Navigation Component
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
 
     // Tests
     testImplementation(libs.bundles.test)

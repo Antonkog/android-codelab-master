@@ -9,13 +9,17 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -26,94 +30,102 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.sap.codelab.R
-import com.sap.codelab.core.presentation.LocationService
-import com.sap.codelab.databinding.ActivityCreateMemoBinding
-import com.sap.codelab.utils.Constants
+import com.sap.codelab.databinding.FragmentCreateMemoBinding
 import com.sap.codelab.utils.Constants.LAST_LATITUDE
 import com.sap.codelab.utils.Constants.LAST_LONGITUDE
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-/**
- * Activity that allows a user to create a new Memo.
- */
-internal class CreateMemo : AppCompatActivity(), OnMapReadyCallback {
+class CreateMemoFragment : Fragment(), OnMapReadyCallback {
 
-    private lateinit var binding: ActivityCreateMemoBinding
+    private var _binding: FragmentCreateMemoBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: CreateMemoViewModel by viewModel()
     private lateinit var map: GoogleMap
     private val fusedLocationClient: FusedLocationProviderClient by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityCreateMemoBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
+        @Suppress("DEPRECATION")
+        setHasOptionsMenu(true)
+    }
 
-        // Initialize map
-        binding.contentCreateMemo.map.onCreate(savedInstanceState)
-        binding.contentCreateMemo.map.getMapAsync(this)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentCreateMemoBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        // Request location permission for My Location button
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.map.onCreate(savedInstanceState)
+        binding.map.getMapAsync(this)
+
         if (ContextCompat.checkSelfPermission(
-                this,
+                requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
 
-        if (!isLocationEnabled(baseContext)) {
+        if (!isLocationEnabled(requireContext())) {
             Log.e("GeoFenceManager", "Location services are disabled")
-            Toast.makeText(baseContext, "Please enable location services", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Please enable location services", Toast.LENGTH_LONG)
+                .show()
             val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
             startActivity(intent)
         }
-        if (!isGooglePlayServicesAvailable(baseContext)) {
+        if (!isGooglePlayServicesAvailable(requireContext())) {
             Log.e("GeoFenceManager", "Google Play Services not available")
-            Toast.makeText(baseContext, "Google Play Services required for geofencing", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                requireContext(),
+                "Google Play Services required for geofencing",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
     override fun onStart() {
         super.onStart()
-        binding.contentCreateMemo.map.onStart()
+        binding.map.onStart()
     }
 
     override fun onResume() {
         super.onResume()
-        binding.contentCreateMemo.map.onResume()
+        binding.map.onResume()
     }
 
     override fun onPause() {
-        binding.contentCreateMemo.map.onPause()
+        binding.map.onPause()
         super.onPause()
     }
 
     override fun onStop() {
-        binding.contentCreateMemo.map.onStop()
+        binding.map.onStop()
         super.onStop()
     }
 
-    override fun onDestroy() {
-        binding.contentCreateMemo.map.onDestroy()
-        super.onDestroy()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        binding.contentCreateMemo.map.onSaveInstanceState(outState)
+    override fun onDestroyView() {
+        binding.map.onDestroy()
+        _binding = null
+        super.onDestroyView()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        binding.contentCreateMemo.map.onLowMemory()
+        binding.map.onLowMemory()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        binding.map.onSaveInstanceState(outState)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-
 
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             if (location?.latitude != null)
@@ -138,31 +150,30 @@ internal class CreateMemo : AppCompatActivity(), OnMapReadyCallback {
                 )
         }
 
-        // Enable My Location if permission granted
         if (ContextCompat.checkSelfPermission(
-                this,
+                requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             map.isMyLocationEnabled = true
         }
 
-        // Set click listener for map
         map.setOnMapClickListener { latLng ->
-            map.clear()  // Clear previous markers
+            map.clear()
             map.addMarker(MarkerOptions().position(latLng).title("Selected Location"))
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f))
-            // Update ViewModel with coordinates
             viewModel.updateLocation(latLng.latitude, latLng.longitude)
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_create_memo, menu)
-        return true
+    @Deprecated("Deprecated in Java")
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_create_memo, menu)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        @Suppress("DEPRECATION")
         return when (item.itemId) {
             R.id.action_save -> {
                 saveMemo()
@@ -173,7 +184,7 @@ internal class CreateMemo : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun saveMemo() = with(binding.contentCreateMemo) {
+    private fun saveMemo() = with(binding) {
         viewModel.updateMemo(memoTitle.text.toString(), memoDescription.text.toString())
 
         if (viewModel.isMemoValid()) {
@@ -184,11 +195,10 @@ internal class CreateMemo : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun handleValidMemo() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.saveMemo()
             viewModel.addGeofence()
-            setResult(RESULT_OK)
-            finish()
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
     }
 
@@ -197,20 +207,21 @@ internal class CreateMemo : AppCompatActivity(), OnMapReadyCallback {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
+
     fun isGooglePlayServicesAvailable(context: Context): Boolean {
         val googleApiAvailability = GoogleApiAvailability.getInstance()
         val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(context)
         return resultCode == ConnectionResult.SUCCESS
     }
-    private fun showValidationErrors() = with(binding.contentCreateMemo) {
+
+    private fun showValidationErrors() = with(binding) {
         memoTitleContainer.error =
             getErrorMessage(viewModel.hasTitleError(), R.string.memo_title_empty_error)
         memoDescriptionContainer.error =
             getErrorMessage(viewModel.hasTextError(), R.string.memo_text_empty_error)
-        // Optional: Add location error if no location selected
         if (!viewModel.hasValidLocation()) {
             Toast.makeText(
-                this@CreateMemo,
+                requireContext(),
                 "Please select a location on the map",
                 Toast.LENGTH_SHORT
             ).show()
@@ -227,15 +238,7 @@ internal class CreateMemo : AppCompatActivity(), OnMapReadyCallback {
                     map.isMyLocationEnabled = true
                 } catch (e: SecurityException) {
                     Log.e("CreateMemo", "Error enabling location: ${e.message}")
-                    // Handle unexpected denial
                 }
             }
         }
-
-    private fun startForegroundService(memoId: Long) {
-        val serviceIntent = Intent(applicationContext, LocationService::class.java).apply {
-            putExtra(Constants.BUNDLE_MEMO_ID, memoId)
-        }
-        startForegroundService(serviceIntent)
-    }
 }

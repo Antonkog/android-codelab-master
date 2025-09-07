@@ -27,7 +27,6 @@ internal class HomeViewModel(
         vmJob.cancel()
     }
 
-    // Use our own scope that doesn't rely on Dispatchers.Main to make JVM unit tests simpler
     private val vmJob = kotlinx.coroutines.SupervisorJob()
     private val vmScope = kotlinx.coroutines.CoroutineScope(vmJob + Dispatchers.Default)
 
@@ -46,7 +45,13 @@ internal class HomeViewModel(
      */
     val state: StateFlow<MemosListState> =
         _state
-            .onStart { loadAllMemos() }
+            .onStart {
+                if (state.value.isShowingAll) {
+                    loadAllMemos()
+                } else {
+                    loadOpenMemos()
+                }
+            }
             .stateIn(
                 scope = vmScope,
                 started = SharingStarted.WhileSubscribed(5000L),

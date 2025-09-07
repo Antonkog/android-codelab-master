@@ -14,6 +14,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
+import androidx.core.graphics.drawable.IconCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -23,7 +24,7 @@ import com.google.android.gms.location.Priority
 import com.sap.codelab.R
 import com.sap.codelab.core.domain.IMemoRepository
 import com.sap.codelab.core.domain.Memo
-import com.sap.codelab.home.presentation.Home
+import com.sap.codelab.main.MainActivity
 import com.sap.codelab.utils.Constants
 import com.sap.codelab.utils.Constants.BUNDLE_MEMO_ID
 import com.sap.codelab.utils.Constants.LAST_LATITUDE
@@ -33,6 +34,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+
 
 class LocationService : Service() {
 
@@ -50,6 +52,7 @@ class LocationService : Service() {
         private const val CHANNEL_ID = "location_channel"
         private const val CHANNEL_NAME = "Location Services"
         private const val UPDATE_INTERVAL = 5000L // 5 seconds
+
         @Volatile
         private var running: Boolean = false
         fun isRunning(): Boolean = running
@@ -148,6 +151,9 @@ class LocationService : Service() {
             .setContentTitle(getString(R.string.location_service_on_title))
             .setContentText(getString(R.string.location_service_on))
             .setSmallIcon(R.drawable.ic_search_location)
+            .setLargeIcon(
+                IconCompat.createWithResource(this, R.drawable.ic_search_location).toIcon(this)
+            )
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setSound(null)
             .build()
@@ -182,7 +188,7 @@ class LocationService : Service() {
 
     private fun showMemoNotification(memo: Memo) {
         val text = memo.description.take(Constants.NOTIFICATION_CHARS_COUNT)
-        val intent = Intent(this, Home::class.java).apply {
+        val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra(BUNDLE_MEMO_ID, memo.id)
         }
@@ -196,6 +202,7 @@ class LocationService : Service() {
             .setContentTitle(memo.title)
             .setContentText(text)
             .setSmallIcon(R.drawable.ic_note)
+            .setLargeIcon(IconCompat.createWithResource(this, R.drawable.ic_note).toIcon(this))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)

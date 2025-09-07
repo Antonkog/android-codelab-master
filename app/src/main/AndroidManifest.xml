@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sap.codelab">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Location permissions for location-based notifications -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -8,8 +9,9 @@
     <!-- For apps targeting Android 10 (API 29) or higher and needing geofencing/background checks -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+
     <application
         android:name=".App"
         android:icon="@mipmap/ic_launcher"
@@ -30,30 +32,21 @@
             android:value="${MAPS_API_KEY}" />
 
         <activity
-            android:name="com.sap.codelab.home.presentation.Home"
+            android:name="com.sap.codelab.main.MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.sap.codelab.create.presentation.CreateMemo"
-            android:exported="false"
-            android:label="@string/new_memo"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name="com.sap.codelab.detail.presentation.ViewMemo"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
         <service
             android:name=".core.presentation.LocationService"
-            android:foregroundServiceType="location"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="location" />
 
-        <receiver android:name="com.sap.codelab.core.GeofenceBroadcastReceiver"/>
+        <receiver android:name="com.sap.codelab.core.GeofenceBroadcastReceiver" />
 
 
     </application>

@@ -60,11 +60,11 @@ class GeoFenceManager(
                         "Geofence added successfully $geofence + requestID ${geofence.requestId}lat: $latitude lng: $longitude"
                     )
                 }.addOnFailureListener { e ->
-                Log.d(
-                    "GeoFenceManager",
-                    "Failed to add geofence: ${e.message} +  $geofence + requestID ${geofence.requestId}lat: $latitude lng: $longitude"
-                )
-            }
+                    Log.d(
+                        "GeoFenceManager",
+                        "Failed to add geofence: ${e.message} +  $geofence + requestID ${geofence.requestId}lat: $latitude lng: $longitude"
+                    )
+                }
         }
     }
 }

@@ -82,7 +82,7 @@ class LocationService : Service() {
                                 longitude = memo.reminderLongitude
                             }
                             val distance = currentLocation.distanceTo(target)
-                            Log.d(TAG, "Distance to memo ${'$'}{memo.id}: ${'$'}distance meters")
+                            Log.d(TAG, "Distance to memo ${memo.id}: $distance meters")
                             if (distance <= Constants.NOTIFICATION_RADIUS_IN_METERS) {
                                 showMemoNotification(memo)
                                 // Mark as notified in DB to avoid duplicates
@@ -92,7 +92,7 @@ class LocationService : Service() {
                                     } catch (e: Exception) {
                                         Log.e(
                                             TAG,
-                                            "Failed to mark memo as notified: ${'$'}{e.message}",
+                                            "Failed to mark memo as notified: ${e.message}",
                                             e
                                         )
                                     }
@@ -144,7 +144,10 @@ class LocationService : Service() {
     fun demoteFromForeground(removeNotification: Boolean = true) {
         // Stop being a foreground service but keep it running
         try {
-            ServiceCompat.stopForeground(this, if (removeNotification) ServiceCompat.STOP_FOREGROUND_REMOVE else 0)
+            ServiceCompat.stopForeground(
+                this,
+                if (removeNotification) ServiceCompat.STOP_FOREGROUND_REMOVE else 0
+            )
         } catch (e: Exception) {
             Log.w(TAG, "stopForeground failed: ${e.message}")
         }

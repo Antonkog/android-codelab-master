@@ -1,7 +1,6 @@
 package com.sap.codelab
 
 import android.app.Application
-import android.content.Context
 import android.content.Intent
 import android.location.LocationManager
 import android.provider.Settings
@@ -47,7 +46,7 @@ internal class App : Application(), DefaultLifecycleObserver {
     }
 
     private fun isLocationEnabled(): Boolean {
-        val locationManager =  getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }

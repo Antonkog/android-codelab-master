@@ -45,10 +45,6 @@ class CreateMemoFragment : Fragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private val fusedLocationClient: FusedLocationProviderClient by inject()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -58,7 +54,7 @@ class CreateMemoFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupMenu(view)
+        setupMenu()
         binding.map.onCreate(savedInstanceState)
         binding.map.getMapAsync(this)
 
@@ -165,7 +161,7 @@ class CreateMemoFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun setupMenu(view: View) {
+    private fun setupMenu() {
         val menuHost: androidx.core.view.MenuHost = requireActivity()
         menuHost.addMenuProvider(object : androidx.core.view.MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -178,6 +174,7 @@ class CreateMemoFragment : Fragment(), OnMapReadyCallback {
                         saveMemo()
                         true
                     }
+
                     else -> false
                 }
             }

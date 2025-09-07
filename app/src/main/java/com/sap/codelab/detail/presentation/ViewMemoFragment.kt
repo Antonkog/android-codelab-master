@@ -42,8 +42,8 @@ class ViewMemoFragment : Fragment() {
 
     private fun updateUI(memo: Memo) {
         binding.run {
-            memoTitle.setText(memo.title)
-            memoDescription.setText(memo.description)
+            memoTitle.text = memo.title
+            memoDescription.text = memo.description
             memoTitle.isEnabled = false
             memoDescription.isEnabled = false
         }

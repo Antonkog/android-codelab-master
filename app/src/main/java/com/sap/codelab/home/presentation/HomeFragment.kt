@@ -29,10 +29,6 @@ class HomeFragment : Fragment() {
 
     private lateinit var permissionsHandler: PermissionsHandler
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -65,7 +61,7 @@ class HomeFragment : Fragment() {
                     startLocationMonitoringService()
                 }
 
-                override fun onLocationPermissionDenied(permission: String) {
+                override fun onLocationPermissionDenied() {
                     binding.fab.visibility = View.GONE
                 }
             }
@@ -134,12 +130,14 @@ class HomeFragment : Fragment() {
                         menuItemShowOpen.isVisible = true
                         true
                     }
+
                     R.id.action_show_open -> {
                         viewModel.loadOpenMemos()
                         menuItemShowOpen.isVisible = false
                         menuItemShowAll.isVisible = true
                         true
                     }
+
                     else -> false
                 }
             }

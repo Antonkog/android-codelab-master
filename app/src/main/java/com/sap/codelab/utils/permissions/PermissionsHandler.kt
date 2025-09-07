@@ -1,7 +1,6 @@
 package com.sap.codelab.utils.permissions
 
 import android.Manifest
-import android.R.id.message
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -25,11 +24,11 @@ class PermissionsHandler(
     caller: ActivityResultCaller,
 ) {
 
-     interface Callback {
+    interface Callback {
         fun onNotificationPermissionGranted()
         fun onNotificationPermissionDenied()
         fun onAllLocationPermissionsGranted()
-        fun onLocationPermissionDenied(permission: String)
+        fun onLocationPermissionDenied()
     }
 
     var callback: Callback? = null
@@ -173,7 +172,7 @@ class PermissionsHandler(
         title: String,
         message: String,
         onContinue: () -> Unit,
-    onDenied: () -> Unit
+        onDenied: () -> Unit
     ) {
         AlertDialog.Builder(activity)
             .setTitle(title)
@@ -188,10 +187,13 @@ class PermissionsHandler(
         val message = when (permission) {
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION ->
                 activity.getString(R.string.permission_location_denied)
+
             Manifest.permission.ACCESS_BACKGROUND_LOCATION ->
                 activity.getString(R.string.permission_background_location_denied)
+
             Manifest.permission.POST_NOTIFICATIONS ->
                 activity.getString(R.string.permission_notification_denied)
+
             else -> activity.getString(R.string.permission_generic_denied)
         }
         AlertDialog.Builder(activity)
@@ -206,7 +208,7 @@ class PermissionsHandler(
 
     private fun handlePermissionDenied(permission: String) {
         showNonCancelablePermissionDeniedDialog(permission)
-        callback?.onLocationPermissionDenied(permission)
+        callback?.onLocationPermissionDenied()
     }
 
     private fun openAppSettings() {

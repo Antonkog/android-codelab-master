@@ -1,4 +1,4 @@
-package com.sap.codelab.core
+package com.sap.codelab.main
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -7,13 +7,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingEvent
 import com.sap.codelab.R
 import com.sap.codelab.core.domain.IMemoRepository
 import com.sap.codelab.core.domain.Memo
-import com.sap.codelab.core.presentation.LocationService
-import com.sap.codelab.main.MainActivity
+import com.sap.codelab.main.LocationService
 import com.sap.codelab.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +32,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             geofencingEvent.triggeringGeofences?.forEach { geofence ->
                 val memoId = geofence.requestId.toLongOrNull()
                 if (memoId != null) {
-                    if (LocationService.isRunning()) {
+                    if (LocationService.Companion.isRunning()) {
                         Log.d(
                             "GeofenceBroadcastReceiver",
                             "LocationService is running; ignoring geofence trigger"
@@ -80,11 +80,11 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
                     )
                     val text = memo.description.take(Constants.NOTIFICATION_CHARS_COUNT)
                     val notification =
-                        androidx.core.app.NotificationCompat.Builder(context, channelId)
+                        NotificationCompat.Builder(context, channelId)
                             .setContentTitle(memo.title)
                             .setContentText(text)
                             .setSmallIcon(R.drawable.ic_note)
-                            .setPriority(androidx.core.app.NotificationCompat.PRIORITY_DEFAULT)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                             .setAutoCancel(true)
                             .setContentIntent(pendingIntent)
                             .build()

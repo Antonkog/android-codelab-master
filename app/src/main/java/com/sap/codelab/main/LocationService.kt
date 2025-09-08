@@ -1,4 +1,4 @@
-package com.sap.codelab.core.presentation
+package com.sap.codelab.main
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -24,18 +24,13 @@ import com.google.android.gms.location.Priority
 import com.sap.codelab.R
 import com.sap.codelab.core.domain.IMemoRepository
 import com.sap.codelab.core.domain.Memo
-import com.sap.codelab.main.MainActivity
 import com.sap.codelab.utils.Constants
-import com.sap.codelab.utils.Constants.BUNDLE_MEMO_ID
-import com.sap.codelab.utils.Constants.LAST_LATITUDE
-import com.sap.codelab.utils.Constants.LAST_LONGITUDE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-
 
 class LocationService : Service() {
 
@@ -71,8 +66,8 @@ class LocationService : Service() {
             override fun onLocationResult(locationResult: LocationResult) {
                 locationResult.lastLocation?.let { currentLocation ->
                     sharedPreferences.edit().apply {
-                        putFloat(LAST_LATITUDE, currentLocation.latitude.toFloat())
-                        putFloat(LAST_LONGITUDE, currentLocation.longitude.toFloat())
+                        putFloat(Constants.LAST_LATITUDE, currentLocation.latitude.toFloat())
+                        putFloat(Constants.LAST_LONGITUDE, currentLocation.longitude.toFloat())
                         apply()
                     }
                     if (memos.isNotEmpty()) {
@@ -210,7 +205,7 @@ class LocationService : Service() {
         val text = memo.description.take(Constants.NOTIFICATION_CHARS_COUNT)
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra(BUNDLE_MEMO_ID, memo.id)
+            putExtra(Constants.BUNDLE_MEMO_ID, memo.id)
         }
         val pendingIntent = PendingIntent.getActivity(
             this,

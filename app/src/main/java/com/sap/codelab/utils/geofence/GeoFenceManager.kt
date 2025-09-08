@@ -1,4 +1,4 @@
-package com.sap.codelab.core
+package com.sap.codelab.utils.geofence
 
 import android.Manifest
 import android.app.PendingIntent
@@ -11,8 +11,8 @@ import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.GeofencingRequest
 import com.sap.codelab.core.domain.Memo
+import com.sap.codelab.main.GeofenceBroadcastReceiver
 import com.sap.codelab.utils.Constants
-
 
 class GeoFenceManager(
     private val context: Context,

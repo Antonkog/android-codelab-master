@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sap.codelab.R
 import com.sap.codelab.core.domain.Memo
 import com.sap.codelab.databinding.FragmentHomeBinding
+import com.sap.codelab.main.LocationService
 import com.sap.codelab.utils.permissions.PermissionsHandler
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -71,7 +73,7 @@ class HomeFragment : Fragment() {
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_createMemoFragment)
         }
-        viewModel.loadOpenMemos()
+        viewModel.loadMemos(true)
     }
 
     private fun initializeAdapter(): MemoAdapter {
@@ -83,7 +85,6 @@ class HomeFragment : Fragment() {
 
             override fun onCheckboxChanged(memo: Memo, isChecked: Boolean) {
                 viewModel.updateMemo(memo, isChecked)
-                viewModel.refreshMemos()
             }
         })
 
@@ -125,14 +126,14 @@ class HomeFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.action_show_all -> {
-                        viewModel.loadAllMemos()
+                        viewModel.loadMemos(true)
                         menuItemShowAll.isVisible = false
                         menuItemShowOpen.isVisible = true
                         true
                     }
 
                     R.id.action_show_open -> {
-                        viewModel.loadOpenMemos()
+                        viewModel.loadMemos(false)
                         menuItemShowOpen.isVisible = false
                         menuItemShowAll.isVisible = true
                         true
@@ -141,14 +142,14 @@ class HomeFragment : Fragment() {
                     else -> false
                 }
             }
-        }, viewLifecycleOwner)
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun startLocationMonitoringService() {
-        if (!com.sap.codelab.core.presentation.LocationService.isRunning()) {
+        if (!LocationService.isRunning()) {
             val intent = android.content.Intent(
                 requireContext(),
-                com.sap.codelab.core.presentation.LocationService::class.java
+                LocationService::class.java
             )
             // Start as a normal service while app is in foreground; it will be promoted to foreground when app goes to background.
             requireContext().startService(intent)

@@ -1,7 +1,7 @@
 package com.sap.codelab.create.presentation
 
 import androidx.lifecycle.ViewModel
-import com.sap.codelab.core.GeoFenceManager
+import com.sap.codelab.utils.geofence.GeoFenceManager
 import com.sap.codelab.core.domain.IMemoRepository
 import com.sap.codelab.core.domain.Memo
 

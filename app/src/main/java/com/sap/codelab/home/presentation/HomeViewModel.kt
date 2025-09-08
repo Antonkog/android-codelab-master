@@ -2,8 +2,8 @@ package com.sap.codelab.home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sap.codelab.core.domain.IMemoRepository
 import com.sap.codelab.core.domain.Memo
+import com.sap.codelab.home.domain.HomeUseCases
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
  * updated automatically.
  */
 internal class HomeViewModel(
-    private val repository: IMemoRepository
+    private val homeUseCases: HomeUseCases
 ) : ViewModel() {
 
     /**
@@ -43,11 +43,7 @@ internal class HomeViewModel(
     val state: StateFlow<MemosListState> =
         _state
             .onStart {
-                if (state.value.isShowingAll) {
-                    loadAllMemos()
-                } else {
-                    loadOpenMemos()
-                }
+                loadMemos(state.value.isShowingAll)
             }
             .stateIn(
                 scope = viewModelScope,
@@ -56,51 +52,29 @@ internal class HomeViewModel(
             )
 
     /**
-     * Switches to observing all memos.
+     * Switches to observing all/open memos.
      *
      * The database is observed via a Flow, so updates are propagated
      * automatically whenever the underlying data changes.
      */
-    fun loadAllMemos() {
-        _state.update { it.copy(isShowingAll = true) }
-
+    fun loadMemos(showAll: Boolean) {
+        _state.update { it.copy(isShowingAll = showAll) }
         memosJob?.cancel()
         memosJob = viewModelScope.launch {
-            repository.getAllMemoAsFlow().collectLatest { memos ->
+            homeUseCases.loadMemos(showAll).collectLatest { memos ->
                 _state.update { it.copy(memos = memos) }
             }
         }
     }
+
 
     /**
-     * Switches to observing only open memos (not marked as done).
-     *
-     * The database is observed via a Flow, so updates are propagated
-     * automatically whenever the underlying data changes.
+     * Method updates memo as Done, cannot be undone.
      */
-    fun loadOpenMemos() {
-        _state.update { it.copy(isShowingAll = false) }
-
-        memosJob?.cancel()
-        memosJob = viewModelScope.launch {
-            repository.getOpenMemoAsFlow().collectLatest { memos ->
-                _state.update { it.copy(memos = memos) }
-            }
-        }
-    }
-
-    fun refreshMemos() {
-        if (state.value.isShowingAll) {
-            loadAllMemos()
-        } else {
-            loadOpenMemos()
-        }
-    }
-
     fun updateMemo(memo: Memo, isChecked: Boolean) {
         if (!isChecked) return
         viewModelScope.launch(Dispatchers.IO) {
-            repository.saveMemo(memo.copy(isDone = true))
+            homeUseCases.saveMemo(memo.copy(isDone = true))
         }
     }
 }

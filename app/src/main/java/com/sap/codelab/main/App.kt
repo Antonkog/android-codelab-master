@@ -1,4 +1,4 @@
-package com.sap.codelab
+package com.sap.codelab.main
 
 import android.app.Application
 import android.content.Intent
@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.sap.codelab.core.presentation.LocationService
 import com.sap.codelab.di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -32,7 +31,7 @@ internal class App : Application(), DefaultLifecycleObserver {
             startActivity(intent)
         }
         // Observe app process lifecycle to control foreground notification of the service
-        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+        ProcessLifecycleOwner.Companion.get().lifecycle.addObserver(this)
     }
 
     override fun onStart(owner: LifecycleOwner) {

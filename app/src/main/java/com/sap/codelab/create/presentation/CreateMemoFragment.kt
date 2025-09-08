@@ -20,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -162,6 +163,7 @@ class CreateMemoFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun setupMenu() {
+
         val menuHost: androidx.core.view.MenuHost = requireActivity()
         menuHost.addMenuProvider(object : androidx.core.view.MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -178,7 +180,7 @@ class CreateMemoFragment : Fragment(), OnMapReadyCallback {
                     else -> false
                 }
             }
-        }, viewLifecycleOwner)
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun saveMemo() = with(binding) {

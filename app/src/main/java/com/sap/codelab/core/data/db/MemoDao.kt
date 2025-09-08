@@ -27,7 +27,7 @@ internal interface MemoDao {
     /**
      * @return all memos for which a notification has not yet been shown.
      */
-    @Query("SELECT * FROM memo WHERE notificationShown = 0")
+    @Query("SELECT * FROM memo WHERE isNotificationShown = 0")
     fun getNotNotifiedAsFlow(): Flow<List<MemoEntity>>
 
     /**

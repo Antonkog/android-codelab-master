@@ -88,7 +88,7 @@ class LocationService : Service() {
                                 // Mark as notified in DB to avoid duplicates
                                 serviceScope.launch {
                                     try {
-                                        repo.saveMemo(memo.copy(notificationShown = true))
+                                        repo.saveMemo(memo.copy(isNotificationShown = true))
                                     } catch (e: Exception) {
                                         Log.e(
                                             TAG,

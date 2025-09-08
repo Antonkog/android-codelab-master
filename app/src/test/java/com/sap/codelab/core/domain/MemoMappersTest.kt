@@ -16,7 +16,7 @@ class MemoMappersTest {
             reminderLatitude = 1.23,
             reminderLongitude = 4.56,
             isDone = false,
-            notificationShown = true
+            isNotificationShown = true
         )
 
         val domain = entity.toMemo()
@@ -27,7 +27,7 @@ class MemoMappersTest {
         assertThat(domain.reminderLatitude).isWithin(1e-9).of(1.23)
         assertThat(domain.reminderLongitude).isWithin(1e-9).of(4.56)
         assertThat(domain.isDone).isFalse()
-        assertThat(domain.notificationShown).isTrue()
+        assertThat(domain.isNotificationShown).isTrue()
 
         val roundTrip = domain.toMemoEntity()
         assertThat(roundTrip).isEqualTo(entity)

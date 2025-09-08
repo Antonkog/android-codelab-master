@@ -16,5 +16,5 @@ data class MemoEntity(
     @ColumnInfo(name = "reminderLatitude") val reminderLatitude: Double,
     @ColumnInfo(name = "reminderLongitude") val reminderLongitude: Double,
     @ColumnInfo(name = "isDone") val isDone: Boolean = false,
-    @ColumnInfo(name = "notificationShown") val notificationShown: Boolean = false
+    @ColumnInfo(name = "isNotificationShown") val isNotificationShown: Boolean = false
 )

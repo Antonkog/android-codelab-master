@@ -91,7 +91,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
                     notificationManager.notify(1002 + memo.id.toInt(), notification)
                     // Mark memo as notified in DB to prevent duplicates
                     try {
-                        repo.saveMemo(memo.copy(notificationShown = true))
+                        repo.saveMemo(memo.copy(isNotificationShown = true))
                     } catch (_: Exception) {
                     }
                 }

@@ -21,6 +21,14 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    // Export Room schema for auto migrations
+    // This generates JSON schema files in app/schemas on build
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
+        arg("room.incremental", "true")
+        arg("room.expandProjection", "true")
+    }
     buildTypes {
         debug {
             isMinifyEnabled = false
@@ -40,6 +48,13 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
+    }
+    // Export Room schema for auto migrations
+    // This generates JSON schema files in app/schemas on build
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
+        arg("room.incremental", "true")
+        arg("room.expandProjection", "true")
     }
     buildFeatures {
         viewBinding = true

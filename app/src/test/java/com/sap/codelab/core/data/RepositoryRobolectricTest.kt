@@ -64,7 +64,7 @@ class RepositoryRobolectricTest {
             assertThat(open.size).isEqualTo(2)
 
             // Mark one as notified
-            repository.saveMemo(all.first().copy(notificationShown = true))
+            repository.saveMemo(all.first().copy(isNotificationShown = true))
             val notNotified = repository.getNotNotifiedMemosAsFlow().first()
             assertThat(notNotified.map { it.title }).containsExactly("Buy shoes")
         }

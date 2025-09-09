@@ -8,6 +8,11 @@
     <string name="action_save">Save</string>
     <string name="memo_title_empty_error">Please provide a title for this memo</string>
     <string name="memo_text_empty_error">Please provide a memo description</string>
+    <string name="memo_location_empty_error">Please choose location on the map.</string>
+
+    <string name="save">Save</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
 
     <!-- Permissions rationale strings -->
     <string name="permission_location_title">Location Permission</string>

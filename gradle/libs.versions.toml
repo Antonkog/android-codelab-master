@@ -1,5 +1,5 @@
 [versions]
-agp = "8.7.3"
+agp = "8.9.1"
 kotlin = "2.2.10"
 ksp = "2.2.10-2.0.2"
 compose = "1.7.5"
@@ -22,9 +22,12 @@ runner = "1.7.0"
 rules = "1.7.0"
 koin = "4.1.0"
 ui-text-google-fonts = "1.9.0"
+maps-compose = "6.10.0"
+
 [libraries]
 play-services-location = { module = "com.google.android.gms:play-services-location", version = "21.3.0" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version = "19.2.0" }
+maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "maps-compose" }
 
 # --- Common ---
 coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -84,6 +87,10 @@ androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "ui-text-google-fonts" }
 
 [bundles]
+maps = [
+    "play-services-maps",
+    "maps-compose",
+    "play-services-location"]
 common = [
     "coroutines-core",
     "coroutines-android",

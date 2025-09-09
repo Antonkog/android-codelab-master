@@ -71,8 +71,7 @@ android {
 }
 dependencies {
 
-    implementation(libs.play.services.location)
-    implementation(libs.play.services.maps)
+    implementation(libs.bundles.maps)
 
     // Lifecycle
     implementation(libs.bundles.lifecycle)

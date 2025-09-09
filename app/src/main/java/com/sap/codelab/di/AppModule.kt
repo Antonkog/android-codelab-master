@@ -8,13 +8,14 @@ import com.sap.codelab.core.data.Repository
 import com.sap.codelab.core.data.db.AppDatabase
 import com.sap.codelab.core.domain.IMemoRepository
 import com.sap.codelab.create.presentation.CreateMemoViewModel
+import com.sap.codelab.create.presentation.compose.CreateMemoNewViewModel
 import com.sap.codelab.detail.presentation.ViewMemoViewModel
 import com.sap.codelab.home.domain.HomeUseCases
 import com.sap.codelab.home.domain.LoadMemosUseCase
 import com.sap.codelab.home.domain.SaveMemoUseCase
 import com.sap.codelab.home.presentation.HomeViewModel
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -35,5 +36,6 @@ val appModule = module {
     }
     viewModelOf(::HomeViewModel)
     viewModelOf(::CreateMemoViewModel)
+    viewModelOf(::CreateMemoNewViewModel)
     viewModelOf(::ViewMemoViewModel)
 }

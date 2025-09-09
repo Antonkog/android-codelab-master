@@ -21,6 +21,7 @@ espresso = "3.7.0"
 runner = "1.7.0"
 rules = "1.7.0"
 koin = "4.1.0"
+ui-text-google-fonts = "1.9.0"
 [libraries]
 play-services-location = { module = "com.google.android.gms:play-services-location", version = "21.3.0" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version = "19.2.0" }
@@ -80,6 +81,7 @@ androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "rules" }
+androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "ui-text-google-fonts" }
 
 [bundles]
 common = [
@@ -113,6 +115,7 @@ compose = [
     "compose-ui",
     "compose-ui-graphics",
     "compose-ui-tooling-preview",
+    "androidx-ui-text-google-fonts",
     "compose-material3",
     "compose-runtime-livedata",
     "compose-navigation",

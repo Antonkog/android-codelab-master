@@ -20,7 +20,7 @@ androidx-junit = "1.3.0"
 espresso = "3.7.0"
 runner = "1.7.0"
 rules = "1.7.0"
-
+koin = "4.1.0"
 [libraries]
 play-services-location = { module = "com.google.android.gms:play-services-location", version = "21.3.0" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version = "19.2.0" }
@@ -29,8 +29,9 @@ play-services-maps = { module = "com.google.android.gms:play-services-maps", ver
 coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 
-koin-core = { group = "io.insert-koin", name = "koin-core", version = "3.5.6" }
-koin-android = { group = "io.insert-koin", name = "koin-android", version = "3.5.6" }
+koin-core = { group = "io.insert-koin", name = "koin-core", version ="koin"}
+koin-android = { group = "io.insert-koin", name = "koin-android", version ="koin" }
+koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
 
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
@@ -114,7 +115,8 @@ compose = [
     "compose-ui-tooling-preview",
     "compose-material3",
     "compose-runtime-livedata",
-    "compose-navigation"
+    "compose-navigation",
+    "koin-androidx-compose"
 ]
 
 compose-debug = [

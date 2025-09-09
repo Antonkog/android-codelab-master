@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sap.codelab.core.domain.Memo
 import com.sap.codelab.home.domain.HomeUseCases
+import com.sap.codelab.home.presentation.compose.MemoListAction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,7 @@ import kotlinx.coroutines.launch
  * It observes database changes through repository flows and keeps the state
  * updated automatically.
  */
-internal class HomeViewModel(
+class HomeViewModel(
     private val homeUseCases: HomeUseCases
 ) : ViewModel() {
 
@@ -67,6 +68,13 @@ internal class HomeViewModel(
         }
     }
 
+    fun onAction(action: MemoListAction) {
+        when (action) {
+            is MemoListAction.OnMemoChecked -> {
+                updateMemo(action.memo, !action.memo.isDone)
+            }
+        }
+    }
 
     /**
      * Method updates memo as Done, cannot be undone.

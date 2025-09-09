@@ -13,6 +13,7 @@ import com.sap.codelab.create.presentation.compose.CreateMemoScreen
 import com.sap.codelab.detail.presentation.compose.ViewMemoScreen
 import com.sap.codelab.home.presentation.compose.HomeScreen
 import com.sap.codelab.ui.theme.AppTheme
+import com.sap.codelab.utils.permissions.PermissionsLoadingScreen
 import kotlinx.serialization.Serializable
 
 class ComposeActivity : ComponentActivity() {
@@ -30,7 +31,14 @@ class ComposeActivity : ComponentActivity() {
 
 @Composable
 fun AppNavHost(nav: NavHostController) {
-    NavHost(navController = nav, startDestination = HomeScreen) {
+    NavHost(navController = nav, startDestination = PermissionsLoadingScreen) {
+        composable<PermissionsLoadingScreen> {
+            PermissionsLoadingScreen(
+                onAllPermissionsGranted = {
+                    nav.navigate(HomeScreen)
+                }
+            )
+        }
         composable<HomeScreen> {
             HomeScreen(
                 onAdd = { nav.navigate(CreateScreen) },
@@ -47,13 +55,14 @@ fun AppNavHost(nav: NavHostController) {
     }
 }
 
+@Serializable
+object PermissionsLoadingScreen
 
 @Serializable
 object HomeScreen
 
 @Serializable
 object CreateScreen
-
 
 @Serializable
 object ViewScreen

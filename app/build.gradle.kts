@@ -76,7 +76,8 @@ android {
     }
 }
 dependencies {
-
+    implementation(libs.accompanist.permissions)
+// check latest version
     implementation(libs.bundles.maps)
 
     // Lifecycle

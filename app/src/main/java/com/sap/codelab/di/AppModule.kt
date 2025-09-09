@@ -14,7 +14,7 @@ import com.sap.codelab.home.domain.LoadMemosUseCase
 import com.sap.codelab.home.domain.SaveMemoUseCase
 import com.sap.codelab.home.presentation.HomeViewModel
 import org.koin.android.ext.koin.androidContext
-import org.koin.core.module.dsl.viewModelOf
+import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 

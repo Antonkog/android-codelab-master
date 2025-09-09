@@ -11,6 +11,11 @@ plugins {
 }
 
 android {
+
+    val major = 1
+    val minor = 1
+    val revision = 2
+
     namespace = "com.sap.codelab"
     compileSdk = 36
     buildToolsVersion = "36.0.0"
@@ -18,8 +23,9 @@ android {
     defaultConfig {
         applicationId = "com.sap.codelab"
         minSdk = 27
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 36
+        versionCode = generateVersionCode(major, minor, revision)
+        versionName = generateVersionName(major, minor, revision)
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -92,4 +98,15 @@ dependencies {
     // --- Testing ---
     testImplementation(libs.bundles.test)
     androidTestImplementation(libs.bundles.androidTest)
+}
+
+// app/versioning.gradle.kts
+fun generateVersionCode(major: Int, minor: Int, revision: Int): Int {
+    return major * 1_000_000 + minor * 10_000 + revision
+}
+
+fun generateVersionName(major: Int, minor: Int, revision: Int): String {
+    val minorStr = minor.toString().padStart(2, '0')
+    val revisionStr = revision.toString().padStart(2, '0')
+    return "$major.$minorStr.$revisionStr"
 }

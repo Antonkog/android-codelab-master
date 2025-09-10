@@ -1,6 +1,7 @@
-package com.sap.codelab
+package com.sap.codelab.main
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,19 +16,27 @@ import com.sap.codelab.create.presentation.compose.CreateMemoScreen
 import com.sap.codelab.detail.presentation.compose.ViewMemoScreen
 import com.sap.codelab.home.presentation.compose.HomeScreen
 import com.sap.codelab.loading.presentation.PermissionsLoadingScreen
-import com.sap.codelab.main.LocationService
 import com.sap.codelab.ui.theme.AppTheme
+import com.sap.codelab.utils.Constants
 import kotlinx.serialization.Serializable
 
 class ComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        // Read memoId from intent extras
+        val memoId = intent?.getLongExtra(Constants.BUNDLE_MEMO_ID, -1L)?.takeIf { it != -1L }
         setContent {
             val startService: () -> Unit = { startLocationMonitoringService(applicationContext) }
             AppTheme {
-                val nav = rememberNavController()
-                AppNavHost(nav, startService)
+                if (memoId != null) {
+                    ViewMemoScreen(
+                        memoId,
+                        onBack = { finish() })//when user opens notification. Show it and exit on back press.
+                } else {
+                    val nav = rememberNavController()
+                    AppNavHost(nav, startService)
+                }
             }
         }
     }
@@ -35,7 +44,7 @@ class ComposeActivity : ComponentActivity() {
 
 private fun startLocationMonitoringService(context: Context) {
     if (!LocationService.isRunning()) {
-        val intent = android.content.Intent(
+        val intent = Intent(
             context,
             LocationService::class.java
         )
@@ -50,7 +59,9 @@ fun AppNavHost(nav: NavHostController, startService: () -> Unit) {
         composable<PermissionsLoadingScreen> {
             PermissionsLoadingScreen(
                 onAllPermissionsGranted = {
-                    nav.navigate(HomeScreen)
+                    nav.navigate(HomeScreen) {
+                        popUpTo(PermissionsLoadingScreen) { inclusive = true }
+                    }
                     startService()
                 }
             )

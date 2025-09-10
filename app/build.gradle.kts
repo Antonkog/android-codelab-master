@@ -1,17 +1,14 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.navigation.safeargs)
     alias(libs.plugins.secrets.gradle.plugin)
 }
 
 android {
-
     val major = 1
     val minor = 1
     val revision = 3
@@ -60,7 +57,6 @@ android {
         }
     }
     buildFeatures {
-        viewBinding = true
         compose = true
     }
     packaging {
@@ -75,28 +71,27 @@ android {
         }
     }
 }
+
 dependencies {
+    // Permissions (Compose Accompanist)
     implementation(libs.accompanist.permissions)
-// check latest version
+    // Google Maps (Play Services + Maps Compose)
     implementation(libs.bundles.maps)
 
-    // Lifecycle
+    // Lifecycle (ViewModel, Runtime, Process)
     implementation(libs.bundles.lifecycle)
 
-    // --- Common shared libs ---
+    // Common shared libs (Room, Koin, Coroutines, Ktor)
     implementation(libs.bundles.common)
     ksp(libs.room.compiler) // Room annotation processor
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
-    // --- XML UI only ---
-    implementation(libs.bundles.xml)
-
-    // --- Jetpack Compose ---
+    // Jetpack Compose
     implementation(platform(libs.compose.bom))
     implementation(libs.bundles.compose)
     debugImplementation(libs.bundles.compose.debug)
 
-    // --- Testing ---
+    // Testing
     testImplementation(libs.bundles.test)
     androidTestImplementation(libs.bundles.androidTest)
 }

@@ -5,8 +5,6 @@ kotlin = "2.2.10"
 ksp = "2.2.10-2.0.2"
 compose = "1.7.5"
 compose-bom = "2025.09.00"
-material = "1.13.0"
-constraintlayout = "2.2.1"
 lifecycle = "2.9.3"
 room = "2.8.0"
 coroutines = "1.10.2"
@@ -24,7 +22,7 @@ rules = "1.7.0"
 koin = "4.1.1"
 ui-text-google-fonts = "1.9.1"
 maps-compose = "6.10.0"
-core-ktx = "1.7.0"
+core-ktx = "1.17.0"
 
 [libraries]
 play-services-location = { module = "com.google.android.gms:play-services-location", version = "21.3.0" }
@@ -32,7 +30,7 @@ play-services-maps = { module = "com.google.android.gms:play-services-maps", ver
 maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "maps-compose" }
 
 # --- Common ---
-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "core-ktx" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 
@@ -53,14 +51,6 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 
 desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar" }
 
-# --- XML UI ---
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version = "1.7.1" }
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.17.0" }
-androidx-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" }
-androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
-
 # --- Compose UI ---
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist-permissions" }
 
@@ -74,6 +64,7 @@ compose-navigation = { group = "androidx.navigation", name = "navigation-compose
 compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "ui-text-google-fonts" }
 
 # --- Lifecycle ---
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
@@ -89,7 +80,6 @@ androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "rules" }
-androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "ui-text-google-fonts" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
 [bundles]
@@ -100,8 +90,8 @@ maps = [
 ]
 
 common = [
-    "core.ktx",
-    "kotlinx.coroutines.test",
+    "core-ktx",
+    "kotlinx-coroutines-test",
     "coroutines-core",
     "coroutines-android",
     "koin-core",
@@ -119,15 +109,6 @@ lifecycle = [
     "androidx-lifecycle-viewmodel-ktx",
     "androidx-lifecycle-livedata-ktx",
     "androidx-lifecycle-process"
-]
-
-xml = [
-    "androidx-appcompat",
-    "androidx-core-ktx",
-    "androidx-material",
-    "androidx-constraintlayout",
-    "androidx-navigation-fragment-ktx",
-    "androidx-navigation-ui-ktx"
 ]
 
 compose = [
@@ -167,5 +148,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-navigation-safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
 secrets-gradle-plugin = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version = "2.0.1" }

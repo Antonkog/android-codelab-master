@@ -8,10 +8,7 @@ data class CreateMemoUiState(
     val description: String = "",
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
-    val titleError: String? = null,
-    val descriptionError: String? = null,
-    val locationError: String? = null
-) {
-    val isValid: Boolean
-        get() = titleError == null && descriptionError == null && locationError == null
-}
+    val titleError: Boolean = false,
+    val descriptionError: Boolean = false,
+    val locationError: Boolean = false
+)

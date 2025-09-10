@@ -24,7 +24,7 @@ class CreateMemoNewViewModel(
         when (action) {
             is CreateMemoAction.OnTitleChange -> {
                 memo = memo.copy(title = action.title)
-                _uiState.update { it.copy(title = action.title, titleError = null) }
+                _uiState.update { it.copy(title = action.title, titleError = false) }
             }
 
             is CreateMemoAction.OnDescriptionChange -> {
@@ -32,7 +32,7 @@ class CreateMemoNewViewModel(
                 _uiState.update {
                     it.copy(
                         description = action.description,
-                        descriptionError = null
+                        descriptionError = false
                     )
                 }
             }
@@ -46,37 +46,31 @@ class CreateMemoNewViewModel(
                     it.copy(
                         latitude = action.latitude,
                         longitude = action.longitude,
-                        locationError = null
+                        locationError = false
                     )
                 }
             }
 
             is CreateMemoAction.OnSave -> {
-                if (validate()) {
-                    saveMemo()
-                }
+                saveMemo()
             }
         }
     }
 
-    private fun validate(): Boolean {
-        var hasError = false
+    fun validate(): Boolean {
         val current = _uiState.value
-        var titleError: String? = null
-        var descriptionError: String? = null
-        var locationError: String? = null
+        var titleError = false
+        var descriptionError = false
+        var locationError = false
 
         if (current.title.isBlank()) {
-            titleError = "Title cannot be empty"
-            hasError = true
+            titleError = true
         }
         if (current.description.isBlank()) {
-            descriptionError = "Description cannot be empty"
-            hasError = true
+            descriptionError = true
         }
         if (current.latitude == 0.0 || current.longitude == 0.0) {
-            locationError = "Please select a location on the map"
-            hasError = true
+            locationError = true
         }
 
         _uiState.value = current.copy(
@@ -84,7 +78,7 @@ class CreateMemoNewViewModel(
             descriptionError = descriptionError,
             locationError = locationError
         )
-        return !hasError
+        return !titleError && !descriptionError && !locationError
     }
 
     private fun saveMemo() = viewModelScope.launch {

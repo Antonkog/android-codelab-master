@@ -20,9 +20,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sap.codelab.create.presentation.compose.components.OnLocationSetListener
+import com.sap.codelab.R
 import com.sap.codelab.create.presentation.compose.components.SelectableMap
 import org.koin.androidx.compose.koinViewModel
 
@@ -34,6 +35,9 @@ fun CreateMemoScreen(
     vm: CreateMemoNewViewModel = koinViewModel()
 ) {
     val state by vm.uiState.collectAsStateWithLifecycle()
+    val locationNotSetError = stringResource(R.string.memo_location_empty_error)
+    val titleNotSetError = stringResource(R.string.memo_title_empty_error)
+    val descriptionNotSetError = stringResource(R.string.memo_text_empty_error)
 
     Scaffold(
         topBar = {
@@ -46,8 +50,10 @@ fun CreateMemoScreen(
                 },
                 actions = {
                     TextButton(onClick = {
-                        vm.onAction(CreateMemoAction.OnSave)
-                        onSave()
+                        if(vm.validate()){
+                            vm.onAction(CreateMemoAction.OnSave)
+                            onSave()
+                        }
                     }) {
                         Text("Save")
                     }
@@ -67,16 +73,16 @@ fun CreateMemoScreen(
                 value = state.title,
                 onValueChange = { vm.onAction(CreateMemoAction.OnTitleChange(it)) },
                 label = { Text("Title") },
-                isError = state.titleError != null,
+                isError = state.titleError,
                 modifier = Modifier.fillMaxWidth()
             )
-            state.titleError?.let {
+            if (state.titleError)
                 Text(
-                    it,
+                    titleNotSetError,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall
                 )
-            }
+
 
             Spacer(Modifier.height(12.dp))
 
@@ -85,20 +91,18 @@ fun CreateMemoScreen(
                 value = state.description,
                 onValueChange = { vm.onAction(CreateMemoAction.OnDescriptionChange(it)) },
                 label = { Text("Description") },
-                isError = state.descriptionError != null,
+                isError = state.descriptionError,
                 modifier = Modifier.fillMaxWidth()
             )
-            state.descriptionError?.let {
+            if (state.descriptionError)
                 Text(
-                    it,
+                    descriptionNotSetError,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall
                 )
-            }
 
             Spacer(Modifier.height(16.dp))
 
-            // Reusable map fills remaining space
             SelectableMap(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -108,13 +112,12 @@ fun CreateMemoScreen(
                 }
             )
 
-            state.locationError?.let {
+            if (state.locationError)
                 Text(
-                    it,
+                    locationNotSetError,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall
                 )
-            }
         }
     }
 }

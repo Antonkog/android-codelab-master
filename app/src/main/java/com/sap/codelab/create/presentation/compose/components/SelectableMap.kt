@@ -93,7 +93,6 @@ fun SelectableMap(
                                 CameraUpdateFactory.newLatLngZoom(latLng, 15f)
                             )
                         }
-                        // Do NOT set marker here
                     }
                 }
             }

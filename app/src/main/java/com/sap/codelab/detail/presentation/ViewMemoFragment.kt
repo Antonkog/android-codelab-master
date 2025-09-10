@@ -35,9 +35,7 @@ class ViewMemoFragment : Fragment() {
                 }
             }
         }
-        if (savedInstanceState == null) {
-            model.loadMemo(args.memoId)
-        }
+        model.loadMemo(args.memoId)
     }
 
     private fun updateUI(memo: Memo) {

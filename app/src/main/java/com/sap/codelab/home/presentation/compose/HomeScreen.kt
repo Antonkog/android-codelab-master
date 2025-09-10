@@ -28,7 +28,7 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onAdd: () -> Unit, onOpen: () -> Unit,
+    onAdd: () -> Unit, onOpen: (memoId: Long) -> Unit,
     homeVM: HomeViewModel = koinViewModel()
 ) {
 
@@ -63,7 +63,7 @@ fun HomeScreen(
             items(state.memos, key = { it.id }) { memo ->
                 MemoItem(
                     memo = memo,
-                    onClick = { onOpen() },
+                    onClick = { onOpen(memo.id) },
                     onChecked = { homeVM.onAction(MemoListAction.OnMemoChecked(memo)) },
                     Modifier
                         .fillMaxWidth()

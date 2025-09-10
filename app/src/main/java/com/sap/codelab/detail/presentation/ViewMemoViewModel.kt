@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 /**
  * ViewModel for matching ViewMemo view.
  */
-internal class ViewMemoViewModel(
+class ViewMemoViewModel(
     private val repository: IMemoRepository
 ) : ViewModel() {
 

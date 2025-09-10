@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.sap.codelab.create.presentation.compose.CreateMemoScreen
 import com.sap.codelab.detail.presentation.compose.ViewMemoScreen
 import com.sap.codelab.home.presentation.compose.HomeScreen
@@ -42,7 +43,7 @@ fun AppNavHost(nav: NavHostController) {
         composable<HomeScreen> {
             HomeScreen(
                 onAdd = { nav.navigate(CreateScreen) },
-                onOpen = { nav.navigate(ViewScreen) })
+                onOpen = { nav.navigate(ViewScreen(it)) })
         }
         composable<CreateScreen> {
             CreateMemoScreen(
@@ -50,7 +51,8 @@ fun AppNavHost(nav: NavHostController) {
                 onSave = { nav.popBackStack() })
         }
         composable<ViewScreen> {
-            ViewMemoScreen(onBack = { nav.popBackStack() })
+            val memoID = it.toRoute<ViewScreen>().memoId
+            ViewMemoScreen(memoID, onBack = { nav.popBackStack() })
         }
     }
 }
@@ -65,4 +67,4 @@ object HomeScreen
 object CreateScreen
 
 @Serializable
-object ViewScreen
+data class ViewScreen(val memoId: Long)

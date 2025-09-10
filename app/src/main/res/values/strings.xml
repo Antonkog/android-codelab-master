@@ -34,4 +34,6 @@
     <string name="location_service_on_title">Location Service Active</string>
     <string name="show_all_description">show all</string>
     <string name="show_open_description">show open</string>
+    <string name="loading">Loading...</string>
+    <string name="view_memo">View memo</string>
 </resources>

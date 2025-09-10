@@ -14,24 +14,52 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sap.codelab.R
+import com.sap.codelab.detail.presentation.ViewMemoViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViewMemoScreen(onBack: () -> Unit) {
+fun ViewMemoScreen(
+    memoId: Long,
+    onBack: () -> Unit,
+    vm: ViewMemoViewModel = koinViewModel()
+) {
+    vm.loadMemo(memoId = memoId)
+    val state by vm.memo.collectAsStateWithLifecycle()
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "View memo") },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null) } }
+                title = { Text(text = stringResource(R.string.view_memo)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
+                }
             )
         }
     ) { inner ->
-        Column(modifier = Modifier.padding(inner).padding(16.dp)) {
-            Text(text = "This is a title", style = MaterialTheme.typography.headlineSmall)
-            Spacer(Modifier.height(8.dp))
-            Text(text = "This is a text")
+        state?.let {
+            Column(
+                modifier = Modifier
+                    .padding(inner)
+                    .padding(16.dp)
+            ) {
+
+                Text(text = it.title, style = MaterialTheme.typography.headlineSmall)
+                Spacer(Modifier.height(8.dp))
+                Text(text = it.description)
+            }
+        } ?: run {
+            Text(text = stringResource(R.string.loading))
         }
     }
 }

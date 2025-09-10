@@ -1,52 +1,96 @@
 package com.sap.codelab.main
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import com.sap.codelab.R
-import com.sap.codelab.home.presentation.HomeFragmentDirections
-import com.sap.codelab.utils.Constants.BUNDLE_MEMO_ID
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.sap.codelab.create.presentation.CreateMemoScreen
+import com.sap.codelab.detail.presentation.ViewMemoScreen
+import com.sap.codelab.home.presentation.HomeScreen
+import com.sap.codelab.loading.presentation.PermissionsLoadingScreen
+import com.sap.codelab.ui.theme.AppTheme
+import com.sap.codelab.utils.Constants
+import kotlinx.serialization.Serializable
 
-class MainActivity : AppCompatActivity() {
-
-    private lateinit var appBarConfiguration: AppBarConfiguration
-    private val navController by lazy {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navHostFragment.navController
-    }
-
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        val toolbar = findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
-
-        handleIntentForNavigation(intent)
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp() || super.onSupportNavigateUp()
-    }
-
-    override fun onNewIntent(intent: android.content.Intent) {
-        super.onNewIntent(intent)
-        handleIntentForNavigation(intent)
-    }
-
-    private fun handleIntentForNavigation(intent: android.content.Intent) {
-        val memoId = intent.getLongExtra(BUNDLE_MEMO_ID, -1L)
-        if (memoId != -1L) {
-            val action = HomeFragmentDirections.actionHomeFragmentToViewMemoFragment(
-                memoId
-            )
-            navController.navigate(action)
+        enableEdgeToEdge()
+        // Read memoId from intent extras
+        val memoId = intent?.getLongExtra(Constants.BUNDLE_MEMO_ID, -1L)?.takeIf { it != -1L }
+        setContent {
+            val startService: () -> Unit = { startLocationMonitoringService(applicationContext) }
+            AppTheme {
+                if (memoId != null) {
+                    ViewMemoScreen(
+                        memoId,
+                        onBack = { finish() })//when user opens notification. Show it and exit on back press. When app was open show all memos.
+                } else {
+                    val nav = rememberNavController()
+                    AppNavHost(nav, startService)
+                }
+            }
         }
     }
 }
+
+private fun startLocationMonitoringService(context: Context) {
+    if (!LocationService.isRunning()) {
+        val intent = Intent(
+            context,
+            LocationService::class.java
+        )
+        // Start as a normal service while app is in foreground; it will be promoted to foreground when app goes to background.
+        context.startService(intent)
+    }
+}
+
+@Composable
+fun AppNavHost(nav: NavHostController, startService: () -> Unit) {
+    NavHost(navController = nav, startDestination = PermissionsLoadingScreen) {
+        composable<PermissionsLoadingScreen> {
+            PermissionsLoadingScreen(
+                onAllPermissionsGranted = {
+                    nav.navigate(HomeScreen) {
+                        popUpTo(PermissionsLoadingScreen) { inclusive = true }
+                    }
+                    startService()
+                }
+            )
+        }
+        composable<HomeScreen> {
+            HomeScreen(
+                onAdd = { nav.navigate(CreateScreen) },
+                onOpen = { nav.navigate(ViewScreen(it)) })
+        }
+        composable<CreateScreen> {
+            CreateMemoScreen(
+                onBack = { nav.popBackStack() },
+                onSave = { nav.popBackStack() })
+        }
+        composable<ViewScreen> {
+            val memoID = it.toRoute<ViewScreen>().memoId
+            ViewMemoScreen(memoID, onBack = { nav.popBackStack() })
+        }
+    }
+}
+
+@Serializable
+object PermissionsLoadingScreen
+
+@Serializable
+object HomeScreen
+
+@Serializable
+object CreateScreen
+
+@Serializable
+data class ViewScreen(val memoId: Long)

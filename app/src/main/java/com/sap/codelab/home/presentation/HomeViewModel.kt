@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sap.codelab.core.domain.Memo
 import com.sap.codelab.home.domain.HomeUseCases
-import com.sap.codelab.home.presentation.compose.MemoListAction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow

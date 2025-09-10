@@ -36,6 +36,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import kotlin.jvm.java
 
 class LocationService : Service() {
 
@@ -204,7 +205,7 @@ class LocationService : Service() {
 
     private fun showMemoNotification(memo: Memo) {
         val text = memo.description.take(Constants.NOTIFICATION_CHARS_COUNT)
-        val intent = Intent(this, ComposeActivity::class.java).apply {
+        val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra(Constants.BUNDLE_MEMO_ID, memo.id)
         }

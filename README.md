@@ -2,6 +2,21 @@
 Android project that serves as a base for code challenges implemented by applicants.
 The base is written in kotlin. 
 
+# Versions
+
+1. **XML-only version**
+    - Implemented first.
+    - Available on the `xml_view` branch.
+
+2. **XML + Compose hybrid version**
+    - Combines XML views and Compose.
+    - Available on the `xml_and_compose` branch.
+    - To switch between implementations, replace `ComposeActivity` with `MainActivity` in the manifest.
+
+3. **Compose-only version**
+    - Fully rewritten using Jetpack Compose.
+    - Available on the `compose` branch.
+
 ## Implementation Notes
 
 1. **Initial approach: Geofence API**
@@ -22,10 +37,9 @@ The base is written in kotlin.
         - If the service **is not running** → the broadcast triggers the notification directly.
 
 ### Components
-- **Broadcast Receiver** → [`GeofenceBroadcastReceiver.kt`](app/src/main/java/com/sap/codelab/core/GeofenceBroadcastReceiver.kt)
-- **Location Service** → [`LocationService.kt`](app/src/main/java/com/sap/codelab/core/presentation/LocationService.kt)
-- **Geofence Manager** → [`GeoFenceManager.kt`](app/src/main/java/com/sap/codelab/core/GeoFenceManager.kt)
-- **Permissions Handler** → [`PermissionsHandler.kt`](app/src/main/java/com/sap/codelab/utils/permissions/PermissionsHandler.kt)
+- **Broadcast Receiver** → [`GeofenceBroadcastReceiver.kt`](app/src/main/java/com/sap/codelab/main/GeofenceBroadcastReceiver.kt)
+- **Location Service** → [`LocationService.kt`](app/src/main/java/com/sap/codelab/main/LocationService.kt)
+- **Geofence Manager** → [`GeoFenceManager.kt`](app/src/main/java/com/sap/codelab/utils/geofence/GeoFenceManager.kt)
 
 ---
 

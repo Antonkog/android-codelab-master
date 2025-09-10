@@ -11,7 +11,7 @@ plugins {
 android {
     val major = 1
     val minor = 1
-    val revision = 3
+    val revision = 4
 
     namespace = "com.sap.codelab"
     compileSdk = 36

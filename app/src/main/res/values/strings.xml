@@ -1,20 +1,33 @@
 <resources>
     <string name="app_name">SAP Codelab</string>
+
+    <!-- screen menu-->
     <string name="action_show_all">Show All</string>
     <string name="action_show_open">Show Open</string>
-    <string name="memo_title">Title</string>
-    <string name="new_memo">New Memo</string>
-    <string name="memo_text">Text</string>
     <string name="action_save">Save</string>
+
+    <!--    screen titles-->
+    <string name="home">Home</string>
+    <string name="view_memo">View memo</string>
+    <string name="new_memo">New Memo</string>
+
+    <!--create memo hints-->
+    <string name="memo_title">Title</string>
+    <string name="memo_text">Text</string>
+
+    <!--    permission screen-->
     <string name="memo_title_empty_error">Please provide a title for this memo</string>
     <string name="memo_text_empty_error">Please provide a memo description</string>
     <string name="memo_location_empty_error">Please choose location on the map.</string>
 
-    <string name="save">Save</string>
-    <string name="title">Title</string>
-    <string name="description">Description</string>
+    <!--location service-->
+    <string name="location_service_channel">Channel for location services</string>
+    <string name="location_service_on">You will be notified when reach the memo 200m radius.</string>
+    <string name="location_service_on_title">Location Service Active</string>
 
-    <!-- Permissions rationale strings -->
+    <string name="loading">Loading…</string>
+
+    <!-- Permissions rationale strings for old xml views implementation -->
     <string name="permission_location_title">Location Permission</string>
     <string name="permission_location_rationale">This app needs location access to provide location-based features.</string>
     <string name="permission_background_location_title">Background Location Permission</string>
@@ -29,11 +42,4 @@
     <string name="permission_background_location_denied">Background location permission is required for full functionality. Please enable it in settings.</string>
     <string name="permission_notification_denied">Notification permission is required to receive updates. Please enable it in settings.</string>
     <string name="permission_generic_denied">A required permission was denied. Please enable it in settings.</string>
-    <string name="location_service_channel">Channel for location services</string>
-    <string name="location_service_on">You will be notified when reach the memo 200m radius.</string>
-    <string name="location_service_on_title">Location Service Active</string>
-    <string name="show_all_description">show all</string>
-    <string name="show_open_description">show open</string>
-    <string name="loading">Loading...</string>
-    <string name="view_memo">View memo</string>
 </resources>

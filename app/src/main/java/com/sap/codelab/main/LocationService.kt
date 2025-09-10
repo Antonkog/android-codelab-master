@@ -25,6 +25,11 @@ import com.sap.codelab.R
 import com.sap.codelab.core.domain.IMemoRepository
 import com.sap.codelab.core.domain.Memo
 import com.sap.codelab.utils.Constants
+import com.sap.codelab.utils.Constants.CHANNEL_ID
+import com.sap.codelab.utils.Constants.CHANNEL_NAME
+import com.sap.codelab.utils.Constants.LOCATION_FOREGROUND_ID
+import com.sap.codelab.utils.Constants.LOCATION_NOTIFICATION_ID
+import com.sap.codelab.utils.Constants.LOCATION_UPDATE_INTERVAL
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -46,16 +51,11 @@ class LocationService : Service() {
     companion object {
         @Volatile
         var instance: LocationService? = null
-        private const val TAG = "LocationService"
-        private const val FOREGROUND_ID = 127
-        private const val NOTIFICATION_ID = 1002
-        private const val CHANNEL_ID = "location_channel"
-        private const val CHANNEL_NAME = "Location Services"
-        private const val UPDATE_INTERVAL = 5000L // 5 seconds
-
         @Volatile
         private var running: Boolean = false
+
         fun isRunning(): Boolean = running
+        private const val TAG = "LocationService"
     }
 
     override fun onCreate() {
@@ -126,7 +126,7 @@ class LocationService : Service() {
         val foregroundNotification = buildForegroundNotification()
         ServiceCompat.startForeground(
             this,
-            FOREGROUND_ID,
+            LOCATION_FOREGROUND_ID,
             foregroundNotification,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
@@ -175,9 +175,9 @@ class LocationService : Service() {
     }
 
     private fun startLocationUpdates() {
-        val locationRequest = LocationRequest.Builder(UPDATE_INTERVAL)
+        val locationRequest = LocationRequest.Builder(LOCATION_UPDATE_INTERVAL)
             .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-            .setMinUpdateIntervalMillis(UPDATE_INTERVAL)
+            .setMinUpdateIntervalMillis(LOCATION_UPDATE_INTERVAL)
             .build()
 
         try {
@@ -225,7 +225,7 @@ class LocationService : Service() {
 
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(
-            NOTIFICATION_ID,
+            LOCATION_NOTIFICATION_ID,
             notification
         )//optional  + memo.id.toInt() but i want to replace previous notification
         Log.d(TAG, "Notification shown for memo ID: ${memo.id}")

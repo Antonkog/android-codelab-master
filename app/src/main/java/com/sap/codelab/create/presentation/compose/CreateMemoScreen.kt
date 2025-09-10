@@ -42,7 +42,7 @@ fun CreateMemoScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("New Memo") },
+                title = { Text(stringResource(R.string.new_memo)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
@@ -55,7 +55,7 @@ fun CreateMemoScreen(
                             onSave()
                         }
                     }) {
-                        Text("Save")
+                        Text(stringResource(R.string.action_save))
                     }
                 }
             )
@@ -72,7 +72,7 @@ fun CreateMemoScreen(
             OutlinedTextField(
                 value = state.title,
                 onValueChange = { vm.onAction(CreateMemoAction.OnTitleChange(it)) },
-                label = { Text("Title") },
+                label = { Text(stringResource(R.string.memo_title)) },
                 isError = state.titleError,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -90,7 +90,7 @@ fun CreateMemoScreen(
             OutlinedTextField(
                 value = state.description,
                 onValueChange = { vm.onAction(CreateMemoAction.OnDescriptionChange(it)) },
-                label = { Text("Description") },
+                label = { Text(stringResource(R.string.memo_text)) },
                 isError = state.descriptionError,
                 modifier = Modifier.fillMaxWidth()
             )

@@ -19,8 +19,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sap.codelab.R
 import com.sap.codelab.home.presentation.HomeViewModel
 import com.sap.codelab.home.presentation.compose.components.MemoItem
 import org.koin.androidx.compose.koinViewModel
@@ -39,13 +41,13 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Home") },
+                title = { Text(text = stringResource(R.string.home)) },
                 actions = {
                     TextButton(onClick = {
                         homeVM.loadMemos(showAll)
                         showAll = !showAll
                     }) {
-                        Text(if (showAll) "Show All" else "Show Open")
+                        Text(if (showAll) stringResource(R.string.action_show_all) else  stringResource(R.string.action_show_open) )
                     }
                 }
             )

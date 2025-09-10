@@ -12,8 +12,8 @@ import androidx.navigation.compose.rememberNavController
 import com.sap.codelab.create.presentation.compose.CreateMemoScreen
 import com.sap.codelab.detail.presentation.compose.ViewMemoScreen
 import com.sap.codelab.home.presentation.compose.HomeScreen
+import com.sap.codelab.loading.presentation.PermissionsLoadingScreen
 import com.sap.codelab.ui.theme.AppTheme
-import com.sap.codelab.utils.permissions.PermissionsLoadingScreen
 import kotlinx.serialization.Serializable
 
 class ComposeActivity : ComponentActivity() {

@@ -1,5 +1,6 @@
 package com.sap.codelab
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +15,7 @@ import com.sap.codelab.create.presentation.compose.CreateMemoScreen
 import com.sap.codelab.detail.presentation.compose.ViewMemoScreen
 import com.sap.codelab.home.presentation.compose.HomeScreen
 import com.sap.codelab.loading.presentation.PermissionsLoadingScreen
+import com.sap.codelab.main.LocationService
 import com.sap.codelab.ui.theme.AppTheme
 import kotlinx.serialization.Serializable
 
@@ -22,21 +24,34 @@ class ComposeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val startService: () -> Unit = { startLocationMonitoringService(applicationContext) }
             AppTheme {
                 val nav = rememberNavController()
-                AppNavHost(nav)
+                AppNavHost(nav, startService)
             }
         }
     }
 }
 
+private fun startLocationMonitoringService(context: Context) {
+    if (!LocationService.isRunning()) {
+        val intent = android.content.Intent(
+            context,
+            LocationService::class.java
+        )
+        // Start as a normal service while app is in foreground; it will be promoted to foreground when app goes to background.
+        context.startService(intent)
+    }
+}
+
 @Composable
-fun AppNavHost(nav: NavHostController) {
+fun AppNavHost(nav: NavHostController, startService: () -> Unit) {
     NavHost(navController = nav, startDestination = PermissionsLoadingScreen) {
         composable<PermissionsLoadingScreen> {
             PermissionsLoadingScreen(
                 onAllPermissionsGranted = {
                     nav.navigate(HomeScreen)
+                    startService()
                 }
             )
         }

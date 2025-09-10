@@ -14,7 +14,7 @@ android {
 
     val major = 1
     val minor = 1
-    val revision = 2
+    val revision = 3
 
     namespace = "com.sap.codelab"
     compileSdk = 36

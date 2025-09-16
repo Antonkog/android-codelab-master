@@ -1,5 +1,6 @@
 package com.sap.codelab.core.data
 
+import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -16,12 +17,13 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.context.stopKoin
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [29, 34])
+@Config(application = TestApp::class, sdk = [29, 34])
 class RepositoryRobolectricTest {
 
     private lateinit var db: AppDatabase
@@ -31,6 +33,7 @@ class RepositoryRobolectricTest {
 
     @Before
     fun setup() {
+        stopKoin()
         val context: Context = ApplicationProvider.getApplicationContext()
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
@@ -79,3 +82,4 @@ class RepositoryRobolectricTest {
         assertThat(notNotified.map { it.title }).containsExactly("Buy shoes")
     }
 }
+class TestApp : Application()//to avoid koin started error, when running all tests together.

@@ -35,7 +35,9 @@ android {
         arg("room.incremental", "true")
         arg("room.expandProjection", "true")
     }
-
+    buildFeatures {
+        buildConfig = true
+    }
     buildTypes {
         debug {
             isMinifyEnabled = false
@@ -93,6 +95,7 @@ dependencies {
 
     // Testing
     testImplementation(libs.bundles.test)
+    androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.bundles.androidTest)
 }
 

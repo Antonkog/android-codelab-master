@@ -2,6 +2,10 @@
 Android project that serves as a base for code challenges implemented by applicants.
 The base is written in kotlin. 
 
+# WARNING
+You need to set your Google Maps API key for the app to work.  
+Set the environment variable `MAPS_API_KEY` to the key you received via email, because the project uses the Google Secret plugin.
+
 # Versions
 
 1. **XML-only version**

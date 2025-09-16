@@ -32,11 +32,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
+import com.sap.codelab.R
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -68,27 +70,27 @@ fun PermissionsLoadingScreen(
             .padding(24.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        Text("We need permissions to work properly", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.permissions_need), style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(16.dp))
 
         PermissionProgressItem(
-            title = "Location",
-            description = "Allow access to your location",
+            title = stringResource(R.string.permission_location),
+            description = stringResource(R.string.permission_location_allow),
             granted = locationPermissionState.status.isGranted
         )
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             PermissionProgressItem(
-                title = "Background Location",
-                description = "Allow location access in the background",
+                title = stringResource(R.string.permission_background_location),
+                description = stringResource(R.string.permission_background_location_allow),
                 granted = backgroundLocationPermissionState.status.isGranted
             )
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             PermissionProgressItem(
-                title = "Notifications",
-                description = "Allow notifications",
+                title = stringResource(R.string.permission_notifications),
+                description = stringResource(R.string.permission_notifications_allow),
                 granted = notificationPermissionState.status.isGranted
             )
         }
@@ -129,7 +131,7 @@ fun PermissionsLoadingScreen(
                 }
             }
         }) {
-            Text("Grant Permissions")
+            Text(stringResource(R.string.permission_grant_btn))
         }
     }
 }

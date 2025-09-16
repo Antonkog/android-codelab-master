@@ -52,12 +52,15 @@ class CreateMemoViewModel(
             }
 
             is CreateMemoAction.OnSave -> {
-                saveMemo()
+                if (validate()) {
+                    saveMemo()
+                    _uiState.update { it.copy(passedValidation = true) }
+                }
             }
         }
     }
 
-    fun validate(): Boolean {
+    private fun validate(): Boolean {
         val current = _uiState.value
         var titleError = false
         var descriptionError = false

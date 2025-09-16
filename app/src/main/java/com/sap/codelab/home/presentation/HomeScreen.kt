@@ -43,7 +43,7 @@ fun HomeScreen(
                 title = { Text(text = stringResource(R.string.home)) },
                 actions = {
                     TextButton(onClick = {
-                        homeVM.loadMemos(showAll)
+                        homeVM.onAction(MemoListAction.LoadMemos(showAll))
                         showAll = !showAll
                     }) {
                         Text(

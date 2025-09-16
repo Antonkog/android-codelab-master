@@ -73,8 +73,7 @@ fun AppNavHost(nav: NavHostController, startService: () -> Unit) {
         }
         composable<CreateScreen> {
             CreateMemoScreen(
-                onBack = { nav.popBackStack() },
-                onSave = { nav.popBackStack() })
+                onBack = { nav.popBackStack() })
         }
         composable<ViewScreen> {
             val memoID = it.toRoute<ViewScreen>().memoId

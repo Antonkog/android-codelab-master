@@ -19,10 +19,16 @@ class ViewMemoViewModel(
     private val _memo: MutableStateFlow<Memo?> = MutableStateFlow(null)
     val memo: StateFlow<Memo?> = _memo
 
+    fun onAction(action: ViewMemoAction) {
+        when (action) {
+            is ViewMemoAction.LoadMemo -> loadMemo(action.memoId)
+        }
+    }
+
     /**
      * Loads the memo whose id matches the given memoId from the database.
      */
-    fun loadMemo(memoId: Long) {
+    private fun loadMemo(memoId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             _memo.value = repository.getMemoById(memoId)
         }

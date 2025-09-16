@@ -57,7 +57,7 @@ class HomeViewModel(
      * The database is observed via a Flow, so updates are propagated
      * automatically whenever the underlying data changes.
      */
-    fun loadMemos(showAll: Boolean) {
+    private fun loadMemos(showAll: Boolean) {
         _state.update { it.copy(isShowingAll = showAll) }
         memosJob?.cancel()
         memosJob = viewModelScope.launch {
@@ -72,13 +72,17 @@ class HomeViewModel(
             is MemoListAction.OnMemoChecked -> {
                 updateMemo(action.memo, !action.memo.isDone)
             }
+
+            is MemoListAction.LoadMemos -> {
+                loadMemos(action.showAll)
+            }
         }
     }
 
     /**
      * Method updates memo as Done, cannot be undone.
      */
-    fun updateMemo(memo: Memo, isChecked: Boolean) {
+    private fun updateMemo(memo: Memo, isChecked: Boolean) {
         if (!isChecked) return
         viewModelScope.launch(Dispatchers.IO) {
             homeUseCases.saveMemo(memo.copy(isDone = true))

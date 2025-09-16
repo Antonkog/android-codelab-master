@@ -10,5 +10,6 @@ data class CreateMemoUiState(
     val longitude: Double = 0.0,
     val titleError: Boolean = false,
     val descriptionError: Boolean = false,
-    val locationError: Boolean = false
+    val locationError: Boolean = false,
+    val passedValidation: Boolean = false
 )

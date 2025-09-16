@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sap.codelab.R
 import org.koin.androidx.compose.koinViewModel
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewMemoScreen(
@@ -28,7 +29,7 @@ fun ViewMemoScreen(
     onBack: () -> Unit,
     vm: ViewMemoViewModel = koinViewModel()
 ) {
-    vm.loadMemo(memoId = memoId)
+    vm.onAction(ViewMemoAction.LoadMemo(memoId))
     val state by vm.memo.collectAsStateWithLifecycle()
     Scaffold(
         topBar = {
